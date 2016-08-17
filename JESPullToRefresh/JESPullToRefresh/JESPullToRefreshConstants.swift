@@ -18,6 +18,6 @@ public struct JESPullToRefreshConstants {
     
     public static var LoadingViewMaxHeight: CGFloat = 70.0
     public static var MinOffsetToPull: CGFloat = 85.0
-    public static var LoadingContentInset: CGFloat = 50.0
+    public static var LoadingContentInset: CGFloat = 64.0
     public static var LoadingViewSize: CGFloat = 30.0
 }

@@ -33,6 +33,7 @@ public class JESPullToRefreshView: UIView {
             let previousValue = state
             _state = newValue
             
+            self.logoImageView.hidden = _state != .Dragging && _state != .AnimatingBounce
             if previousValue == .Dragging && newValue == .AnimatingBounce {
                 loadingView?.startAnimating()
                 animateBounce()
@@ -58,6 +59,19 @@ public class JESPullToRefreshView: UIView {
             loadingView?.removeFromSuperview()
             if let newValue = newValue {
                 addSubview(newValue)
+            }
+        }
+    }
+    
+    var logoImageView: JESPullToRefreshLogoImageView = JESPullToRefreshLogoImageView()
+    
+    var logoImage: String? {
+        willSet {
+            logoImageView.removeFromSuperview()
+            if let newValue = newValue {
+//                logoImageView.image = UIImage(named: newValue)
+                logoImageView.backgroundColor = UIColor.redColor()
+                addSubview(logoImageView)
             }
         }
     }
@@ -120,9 +134,6 @@ public class JESPullToRefreshView: UIView {
     
     // MARK: -
     
-    /**
-     Has to be called when the receiver is no longer required. Otherwise the main loop holds a reference to the receiver which in turn will prevent the receiver from being deallocated.
-     */
     func disassociateDisplayLink() {
         displayLink?.invalidate()
     }
@@ -277,7 +288,7 @@ public class JESPullToRefreshView: UIView {
         resetScrollViewContentInset(shouldAddObserverWhenFinished: false, animated: false, completion: nil)
         
         let centerY = JESPullToRefreshConstants.LoadingContentInset
-        let duration = 0.3
+        let duration = 0.2
         
         scrollView.scrollEnabled = false
         startDisplayLink()
@@ -302,7 +313,7 @@ public class JESPullToRefreshView: UIView {
             if let contentInsetTop = self?.originalContentInsetTop {
                 self?.bounceAnimationHelperView.center = CGPoint(x: 0.0, y: contentInsetTop + JESPullToRefreshConstants.LoadingContentInset)
             }
-            }, completion: nil)
+        }, completion: nil)
     }
     
     // MARK: -
@@ -353,6 +364,10 @@ public class JESPullToRefreshView: UIView {
         loadingView?.frame = CGRect(x: (width - loadingViewSize) / 2.0, y: originY, width: loadingViewSize, height: loadingViewSize)
         loadingView?.maskLayer.frame = convertRect(shapeLayer.frame, toView: loadingView)
         loadingView?.maskLayer.path = shapeLayer.path
+        
+        logoImageView.frame = CGRect(x: (width - 50) / 2.0, y: originY + loadingViewSize + 20, width: 50, height: 50)
+        logoImageView.maskLayer.frame = convertRect(shapeLayer.frame, toView: logoImageView)
+        logoImageView.maskLayer.path = shapeLayer.path
     }
     
     override public func layoutSubviews() {
@@ -370,14 +385,9 @@ public class JESPullToRefreshView: UIView {
                 lControlPointView.center = CGPoint(x: 0, y: height)
                 rControlPointView.center = CGPoint(x: width, y: height)
             } else {
-                let centerY = JESPullToRefreshConstants.LoadingContentInset
-                
-                let waveHeight = currentWaveHeight()
-                let sideY = height
-                
-                controlPointView.center = CGPoint(x: width / 2.0, y: sideY)
-                lControlPointView.center = CGPoint(x: 0, y: sideY)
-                rControlPointView.center = CGPoint(x: width, y: sideY)
+                controlPointView.center = CGPoint(x: width / 2.0, y: height)
+                lControlPointView.center = CGPoint(x: 0, y: height)
+                rControlPointView.center = CGPoint(x: width, y: height)
             }
             
             shapeLayer.frame = CGRect(x: 0.0, y: 0.0, width: width, height: height)

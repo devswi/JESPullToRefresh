@@ -25,9 +25,10 @@ class ViewController: UIViewController {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1.5 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), {
                 self?.tableView.jes_stopLoading()
             })
-            }, loadingView: loadingView)
+        }, loadingView: loadingView, logoImage: "123")
         tableView.jes_setPullToRefreshFillColor(UIColor(red: 57/255.0, green: 67/255.0, blue: 89/255.0, alpha: 1.0))
         tableView.jes_setPullToRefreshBackgroundColor(tableView.backgroundColor!)
+        
     }
 
     deinit {

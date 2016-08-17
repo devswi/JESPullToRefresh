@@ -45,7 +45,7 @@ public extension NSObject {
     }
     
     public func jes_removeObserver(observer: NSObject, forKeyPath keyPath: String) {
-        let observerInfo = [keyPath : observer]
+        let observerInfo = [keyPath: observer]
         
         if let index = jes_observers.indexOf({ $0 == observerInfo}) {
             jes_observers.removeAtIndex(index)
@@ -76,7 +76,7 @@ public extension UIScrollView {
     
     // MARK: - Methods (Public)
     
-    public func jes_addPullToRefreshWithActionHandler(actionHandler: () -> Void, loadingView: JESPullToRefreshLoadingView?) {
+    public func jes_addPullToRefreshWithActionHandler(actionHandler: () -> Void, loadingView: JESPullToRefreshLoadingView?, logoImage: String? = nil) {
         multipleTouchEnabled = false
         panGestureRecognizer.maximumNumberOfTouches = 1
         
@@ -84,6 +84,9 @@ public extension UIScrollView {
         self.pullToRefreshView = pullToRefreshView
         pullToRefreshView.actionHandler = actionHandler
         pullToRefreshView.loadingView = loadingView
+        if let logoImage = logoImage {
+            pullToRefreshView.logoImage = logoImage
+        }
         addSubview(pullToRefreshView)
         
         pullToRefreshView.observing = true

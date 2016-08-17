@@ -69,8 +69,7 @@ public class JESPullToRefreshView: UIView {
         willSet {
             logoImageView.removeFromSuperview()
             if let newValue = newValue {
-//                logoImageView.image = UIImage(named: newValue)
-                logoImageView.backgroundColor = UIColor.redColor()
+                logoImageView.image = UIImage(named: newValue)
                 addSubview(logoImageView)
             }
         }
@@ -365,7 +364,7 @@ public class JESPullToRefreshView: UIView {
         loadingView?.maskLayer.frame = convertRect(shapeLayer.frame, toView: loadingView)
         loadingView?.maskLayer.path = shapeLayer.path
         
-        logoImageView.frame = CGRect(x: (width - 50) / 2.0, y: originY + loadingViewSize + 20, width: 50, height: 50)
+        logoImageView.frame = CGRect(x: (width - 174) / 2.0, y: originY + loadingViewSize + 20, width: 174, height: 57)
         logoImageView.maskLayer.frame = convertRect(shapeLayer.frame, toView: logoImageView)
         logoImageView.maskLayer.path = shapeLayer.path
     }

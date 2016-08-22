@@ -339,11 +339,15 @@ public class JESPullToRefreshView: UIView {
             
             height = scrollView.contentInset.top - originalContentInsetTop
             
-            frame = CGRect(x: 0.0, y: -height - 1.0, width: width, height: height)
         } else if state == .AnimatingToStopped {
+//            guard let scrollView = scrollView() else { return }
+//            
+//            print("contentOffset y: \(scrollView.contentInset.top) \(#function)")
+            
             height = actualContentOffsetY()
         }
         
+        frame = CGRect(x: 0.0, y: -height - 1.0, width: width, height: height)
         shapeLayer.frame = CGRect(x: 0.0, y: 0.0, width: width, height: height)
         shapeLayer.path = currentPath()
         
@@ -357,15 +361,17 @@ public class JESPullToRefreshView: UIView {
         let width = bounds.width
         let height: CGFloat = bounds.height
         
-        let loadingViewSize: CGFloat = JESPullToRefreshConstants.LoadingViewSize
-        let minOriginY = (JESPullToRefreshConstants.LoadingContentInset - loadingViewSize) / 2.0
-        let originY: CGFloat = max(min((height - loadingViewSize) / 2.0, minOriginY), 0.0)
+        let maxLoadingViewSize: CGFloat = JESPullToRefreshConstants.LoadingViewSize
+        let minOriginY = (JESPullToRefreshConstants.LoadingContentInset - maxLoadingViewSize) / 2.0
+        let originY: CGFloat = max(min((height - maxLoadingViewSize) / 2.0, minOriginY), 0.0)
+        
+        let loadingViewSize: CGFloat = min(height, maxLoadingViewSize)
         
         loadingView?.frame = CGRect(x: (width - loadingViewSize) / 2.0, y: originY, width: loadingViewSize, height: loadingViewSize)
         loadingView?.maskLayer.frame = convertRect(shapeLayer.frame, toView: loadingView)
         loadingView?.maskLayer.path = shapeLayer.path
         
-        logoImageView.frame = CGRect(x: 0, y: originY + loadingViewSize + 20, width: width, height: 108)
+        logoImageView.frame = CGRect(x: 0, y: originY + maxLoadingViewSize + 20, width: width, height: 108)
         logoImageView.maskLayer.frame = convertRect(shapeLayer.frame, toView: logoImageView)
         logoImageView.maskLayer.path = shapeLayer.path
     }

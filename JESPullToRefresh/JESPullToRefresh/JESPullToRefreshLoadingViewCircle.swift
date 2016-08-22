@@ -47,9 +47,8 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
     public override init() {
         super.init(frame: .zero)
         
-        shapeLayer.lineWidth = 1.0
-        shapeLayer.fillColor = UIColor.clearColor().CGColor
-        shapeLayer.strokeColor = tintColor.CGColor
+        shapeLayer.lineWidth = 0.0
+        shapeLayer.fillColor = JESPullToRefreshConstants.loadingViewBackgroundColor.CGColor
         shapeLayer.actions = ["strokeEnd" : NSNull(), "transform" : NSNull()]
         shapeLayer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         layer.addSublayer(shapeLayer)
@@ -67,12 +66,13 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
         
         shapeLayer.strokeEnd = min(0.9 * progress, 0.9)
         
-        if progress > 1.0 {
-            let degrees = ((progress - 1.0) * 200.0)
-            shapeLayer.transform = CATransform3DRotate(identityTransform, degrees.toRadians(), 0.0, 0.0, 1.0)
-        } else {
-            shapeLayer.transform = identityTransform
-        }
+//        if progress > 1.0 {
+//            let degrees = ((progress - 1.0) * 200.0)
+//            shapeLayer.transform = CATransform3DRotate(identityTransform, degrees.toRadians(), 0.0, 0.0, 1.0)
+//        } else {
+//
+//        }
+//        shapeLayer.transform = identityTransform
     }
     
     override public func startAnimating() {
@@ -102,7 +102,7 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
     override public func tintColorDidChange() {
         super.tintColorDidChange()
         
-        shapeLayer.strokeColor = tintColor.CGColor
+        shapeLayer.fillColor = JESPullToRefreshConstants.loadingViewBackgroundColor.CGColor
     }
     
     // MARK: -

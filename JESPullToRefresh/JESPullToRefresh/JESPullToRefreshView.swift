@@ -70,6 +70,7 @@ public class JESPullToRefreshView: UIView {
             logoImageView.removeFromSuperview()
             if let newValue = newValue {
                 logoImageView.image = UIImage(named: newValue)
+                logoImageView.contentMode = .Top
                 addSubview(logoImageView)
             }
         }
@@ -364,7 +365,7 @@ public class JESPullToRefreshView: UIView {
         loadingView?.maskLayer.frame = convertRect(shapeLayer.frame, toView: loadingView)
         loadingView?.maskLayer.path = shapeLayer.path
         
-        logoImageView.frame = CGRect(x: (width - 174) / 2.0, y: originY + loadingViewSize + 20, width: 174, height: 57)
+        logoImageView.frame = CGRect(x: 0, y: originY + loadingViewSize + 20, width: width, height: 108)
         logoImageView.maskLayer.frame = convertRect(shapeLayer.frame, toView: logoImageView)
         logoImageView.maskLayer.path = shapeLayer.path
     }

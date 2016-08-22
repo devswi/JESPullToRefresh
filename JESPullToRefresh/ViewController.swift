@@ -26,7 +26,7 @@ class ViewController: UIViewController {
                 self?.tableView.jes_stopLoading()
             })
         }, loadingView: loadingView, logoImage: "refresh_logo")
-        tableView.jes_setPullToRefreshFillColor(UIColor(red: 57/255.0, green: 67/255.0, blue: 89/255.0, alpha: 1.0))
+        tableView.jes_setPullToRefreshFillColor(UIColor(red: 224/255.0, green: 231/255.0, blue: 235/255.0, alpha: 1.0))
         tableView.jes_setPullToRefreshBackgroundColor(tableView.backgroundColor!)
         
     }

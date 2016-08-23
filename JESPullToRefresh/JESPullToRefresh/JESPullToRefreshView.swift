@@ -340,10 +340,6 @@ public class JESPullToRefreshView: UIView {
             height = scrollView.contentInset.top - originalContentInsetTop
             
         } else if state == .AnimatingToStopped {
-//            guard let scrollView = scrollView() else { return }
-//            
-//            print("contentOffset y: \(scrollView.contentInset.top) \(#function)")
-            
             height = actualContentOffsetY()
         }
         

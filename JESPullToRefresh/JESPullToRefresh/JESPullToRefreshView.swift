@@ -201,7 +201,7 @@ public class JESPullToRefreshView: UIView {
     
     private func actualContentOffsetY() -> CGFloat {
         guard let scrollView = scrollView() else { return 0.0 }
-        return max(-scrollView.contentInset.top - scrollView.contentOffset.y, 0)
+        return max(-scrollView.contentInset.top - scrollView.contentOffset.y, 0.0)
     }
     
     private func currentHeight() -> CGFloat {
@@ -338,9 +338,9 @@ public class JESPullToRefreshView: UIView {
             scrollView.contentOffset.y = -scrollView.contentInset.top
             
             height = scrollView.contentInset.top - originalContentInsetTop
-            
         } else if state == .AnimatingToStopped {
-            height = actualContentOffsetY()
+            guard let scrollView = scrollView() else { return }
+            height = -scrollView.contentOffset.y
         }
         
         frame = CGRect(x: 0.0, y: -height - 1.0, width: width, height: height)
@@ -358,10 +358,13 @@ public class JESPullToRefreshView: UIView {
         let height: CGFloat = bounds.height
         
         let maxLoadingViewSize: CGFloat = JESPullToRefreshConstants.LoadingViewSize
-        let minOriginY = (JESPullToRefreshConstants.LoadingContentInset - maxLoadingViewSize) / 2.0
-        let originY: CGFloat = max(min((height - maxLoadingViewSize) / 2.0, minOriginY), 0.0)
         
-        let loadingViewSize: CGFloat = min(height, maxLoadingViewSize)
+        let minOriginY = (JESPullToRefreshConstants.LoadingContentInset - maxLoadingViewSize) / 2.0
+        let originY: CGFloat = max(min((height - maxLoadingViewSize) / 2.0, minOriginY), JESPullToRefreshConstants.LoadingViewTopSpacing)
+        
+        var loadingViewSize: CGFloat = min(max(height - 2 * JESPullToRefreshConstants.LoadingViewTopSpacing, 2.0), maxLoadingViewSize)
+        
+        if state == .AnimatingToStopped { loadingViewSize = maxLoadingViewSize }
         
         loadingView?.frame = CGRect(x: (width - loadingViewSize) / 2.0, y: originY, width: loadingViewSize, height: loadingViewSize)
         loadingView?.maskLayer.frame = convertRect(shapeLayer.frame, toView: loadingView)
@@ -377,7 +380,7 @@ public class JESPullToRefreshView: UIView {
         
         if let scrollView = scrollView() where state != .AnimatingBounce {
             let width = scrollView.bounds.width
-            let height = currentHeight()
+            let height = state == .AnimatingToStopped ? -scrollView.contentOffset.y :  currentHeight()
             
             frame = CGRect(x: 0.0, y: -height, width: width, height: height)
             
@@ -394,7 +397,6 @@ public class JESPullToRefreshView: UIView {
             
             shapeLayer.frame = CGRect(x: 0.0, y: 0.0, width: width, height: height)
             shapeLayer.path = currentPath()
-            
             layoutLoadingView()
         }
     }

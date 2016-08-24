@@ -116,9 +116,7 @@ public extension UIScrollView {
 
 public extension UIView {
     func jes_center(usePresentationLayerIfPossible: Bool) -> CGPoint {
-        if usePresentationLayerIfPossible, let presentationLayer = layer.presentationLayer() as? CALayer {
-            return presentationLayer.position
-        }
+        if usePresentationLayerIfPossible, let presentationLayer = layer.presentationLayer() as? CALayer { return presentationLayer.position }
         return center
     }
 }

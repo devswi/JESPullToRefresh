@@ -235,15 +235,20 @@ public class JESPullToRefreshView: UIView {
         
         if state == .Stopped && dragging {
             state = .Dragging
+            loadingView?.alpha = 1
+            alpha = 1
         } else if state == .Dragging && dragging == false {
             if offsetY >= JESPullToRefreshConstants.MinOffsetToPull {
                 state = .AnimatingBounce
             } else {
                 state = .Stopped
+                loadingView?.alpha = 1
             }
         } else if state.isAnyOf([.Dragging, .Stopped]) {
-            let pullProgress: CGFloat = offsetY / JESPullToRefreshConstants.MinOffsetToPull
-            loadingView?.setPullProgress(pullProgress)
+            var pullProgress: CGFloat = min(offsetY / JESPullToRefreshConstants.MinOffsetToPull, 1.0)
+            if state == .Stopped { pullProgress = 0.0 }
+            let height = bounds.height
+            if height > 2 * JESPullToRefreshConstants.LoadingViewTopSpacing { loadingView?.setPullProgress(pullProgress) }
         }
     }
     
@@ -261,7 +266,13 @@ public class JESPullToRefreshView: UIView {
         
         scrollView.jes_removeObserver(self, forKeyPath: JESPullToRefreshConstants.KeyPath.ContentInset)
         
-        let animationBlock = { scrollView.contentInset = contentInset }
+        let animationBlock = {
+            if self.state == .AnimatingToStopped {
+                self.loadingView?.alpha = 0
+                self.alpha = 0
+            }
+            scrollView.contentInset = contentInset
+        }
         let completionBlock = { () -> Void in
             if shouldAddObserverWhenFinished && self.observing {
                 scrollView.jes_addObserver(self, forKeyPath: JESPullToRefreshConstants.KeyPath.ContentInset)
@@ -271,7 +282,7 @@ public class JESPullToRefreshView: UIView {
         
         if animated {
             startDisplayLink()
-            UIView.animateWithDuration(0.2, animations: animationBlock, completion: { _ in
+            UIView.animateWithDuration(0.5, animations: animationBlock, completion: { _ in
                 self.stopDisplayLink()
                 completionBlock()
             })
@@ -359,12 +370,11 @@ public class JESPullToRefreshView: UIView {
         
         let maxLoadingViewSize: CGFloat = JESPullToRefreshConstants.LoadingViewSize
         
-        let minOriginY = (JESPullToRefreshConstants.LoadingContentInset - maxLoadingViewSize) / 2.0
-        let originY: CGFloat = max(min((height - maxLoadingViewSize) / 2.0, minOriginY), JESPullToRefreshConstants.LoadingViewTopSpacing)
+        // Max origin Y of loading view
+        let maxOriginY = (JESPullToRefreshConstants.LoadingContentInset - maxLoadingViewSize) / 2.0
+        let loadingViewSize: CGFloat = min(height < 3 ? 0 : height, maxLoadingViewSize)
         
-        var loadingViewSize: CGFloat = min(max(height - 2 * JESPullToRefreshConstants.LoadingViewTopSpacing, 2.0), maxLoadingViewSize)
-        
-        if state == .AnimatingToStopped { loadingViewSize = maxLoadingViewSize }
+        let originY: CGFloat = min((height - loadingViewSize) / 2.0, maxOriginY)
         
         loadingView?.frame = CGRect(x: (width - loadingViewSize) / 2.0, y: originY, width: loadingViewSize, height: loadingViewSize)
         loadingView?.maskLayer.frame = convertRect(shapeLayer.frame, toView: loadingView)

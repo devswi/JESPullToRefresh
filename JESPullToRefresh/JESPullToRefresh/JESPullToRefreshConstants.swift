@@ -20,8 +20,10 @@ public struct JESPullToRefreshConstants {
     public static var LoadingViewMaxHeight: CGFloat = 70.0
     public static var MinOffsetToPull: CGFloat = 85.0
     public static var LoadingContentInset: CGFloat = 64.0
-    public static var LoadingViewSize: CGFloat = 30.0
+    public static var LoadingViewSize: CGFloat = 36.0
     public static var LoadingViewTopSpacing: CGFloat = 3.0
     
-    public static let loadingViewBackgroundColor: UIColor = UIColor(red: 72 / 255.0, green: 70 / 255.0, blue: 109 / 255.0, alpha: 1.0)
+    public static let LoadingViewBackgroundColor: UIColor = UIColor(red: 72 / 255.0, green: 70 / 255.0, blue: 109 / 255.0, alpha: 1.0)
+    
+    public static let LoadingViewMinProgress: CGFloat = 0.203125
 }

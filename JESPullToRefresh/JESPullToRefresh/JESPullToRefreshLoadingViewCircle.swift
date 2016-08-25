@@ -33,6 +33,8 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
     
     private let kRotationAnimation = "kRotationAnimation"
     
+    private let kMinProgress: CGFloat = 0.0823529411764706
+    
     private let shapeLayer = CAShapeLayer()
     private lazy var identityTransform: CATransform3D = {
         var transform = CATransform3DIdentity
@@ -47,10 +49,10 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
     public override init() {
         super.init(frame: .zero)
         
-        shapeLayer.lineWidth = 0.0
-        shapeLayer.fillColor = JESPullToRefreshConstants.loadingViewBackgroundColor.CGColor
+        shapeLayer.lineWidth = 3.0
+        shapeLayer.strokeColor = JESPullToRefreshConstants.LoadingViewBackgroundColor.CGColor
+        shapeLayer.fillColor = UIColor.clearColor().CGColor
         shapeLayer.actions = ["strokeEnd" : NSNull(), "transform" : NSNull()]
-        shapeLayer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         layer.addSublayer(shapeLayer)
     }
     
@@ -63,30 +65,22 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
     
     override public func setPullProgress(progress: CGFloat) {
         super.setPullProgress(progress)
-        
-        shapeLayer.strokeEnd = min(0.9 * progress, 0.9)
-        
-//        if progress > 1.0 {
-//            let degrees = ((progress - 1.0) * 200.0)
-//            shapeLayer.transform = CATransform3DRotate(identityTransform, degrees.toRadians(), 0.0, 0.0, 1.0)
-//        } else {
-//
-//        }
-//        shapeLayer.transform = identityTransform
+//        shapeLayer.lineWidth = (3 * progress + 3 * kMinProgress - 6) / (kMinProgress - 1)
+        print("\(progress)")
     }
     
     override public func startAnimating() {
         super.startAnimating()
         
-        if shapeLayer.animationForKey(kRotationAnimation) != nil { return }
+//        if shapeLayer.animationForKey(kRotationAnimation) != nil { return }
         
-        let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation.z")
-        rotationAnimation.toValue = CGFloat(2 * M_PI) + currentDegree()
-        rotationAnimation.duration = 1.0
-        rotationAnimation.repeatCount = Float.infinity
-        rotationAnimation.removedOnCompletion = false
-        rotationAnimation.fillMode = kCAFillModeForwards
-        shapeLayer.addAnimation(rotationAnimation, forKey: kRotationAnimation)
+//        let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation.z")
+//        rotationAnimation.toValue = CGFloat(2 * M_PI) + currentDegree()
+//        rotationAnimation.duration = 1.0
+//        rotationAnimation.repeatCount = Float.infinity
+//        rotationAnimation.removedOnCompletion = false
+//        rotationAnimation.fillMode = kCAFillModeForwards
+//        shapeLayer.addAnimation(rotationAnimation, forKey: kRotationAnimation)
     }
     
     override public func stopLoading() {
@@ -102,7 +96,7 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
     override public func tintColorDidChange() {
         super.tintColorDidChange()
         
-        shapeLayer.fillColor = JESPullToRefreshConstants.loadingViewBackgroundColor.CGColor
+        shapeLayer.strokeColor = JESPullToRefreshConstants.LoadingViewBackgroundColor.CGColor
     }
     
     // MARK: -
@@ -113,8 +107,7 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
         
         shapeLayer.frame = bounds
         
-        let inset = shapeLayer.lineWidth / 2.0
-        shapeLayer.path = UIBezierPath(ovalInRect: CGRectInset(shapeLayer.bounds, inset, inset)).CGPath
+        shapeLayer.path = UIBezierPath(arcCenter: CGPoint(x: frame.size.width / 2.0, y: frame.size.height / 2.0), radius: (frame.size.height - 6) / 2.0, startAngle: 0.0, endAngle: CGFloat(M_PI * 2.0), clockwise: true).CGPath
     }
     
 }

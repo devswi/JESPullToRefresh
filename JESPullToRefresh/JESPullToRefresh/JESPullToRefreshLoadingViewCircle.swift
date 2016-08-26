@@ -23,6 +23,38 @@ public extension CGFloat {
     
 }
 
+private class JESPullToRefreshLoadingInsideViewCircle: UIView {
+    
+    private let shapeLayer = CAShapeLayer()
+    
+    private init(fillColor: UIColor) {
+        super.init(frame: .zero)
+        
+        self.backgroundColor = UIColor.clearColor()
+        
+        shapeLayer.lineWidth = 0.01
+        shapeLayer.strokeColor = UIColor.clearColor().CGColor
+        shapeLayer.fillColor = fillColor.CGColor
+        shapeLayer.actions = ["strokeEnd": NSNull(), "transform": NSNull()]
+        layer.addSublayer(shapeLayer)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: -
+    // MARK: Layout
+    
+    override private func layoutSubviews() {
+        super.layoutSubviews()
+        
+        shapeLayer.frame = bounds
+        
+        shapeLayer.path = UIBezierPath(ovalInRect: shapeLayer.frame).CGPath
+    }
+}
+
 // MARK: -
 // MARK: JESPullToRefreshLoadingViewCircle
 
@@ -33,27 +65,25 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
     
     private let kRotationAnimation = "kRotationAnimation"
     
-    private let kMinProgress: CGFloat = 0.0823529411764706
-    
     private let shapeLayer = CAShapeLayer()
-    private lazy var identityTransform: CATransform3D = {
-        var transform = CATransform3DIdentity
-        transform.m34 = CGFloat(1.0 / -500.0)
-        transform = CATransform3DRotate(transform, CGFloat(-90.0).toRadians(), 0.0, 0.0, 1.0)
-        return transform
-    }()
+    private let insideShapeLayer = CAShapeLayer()
+    
+    private var insideView: JESPullToRefreshLoadingInsideViewCircle?
     
     // MARK: -
     // MARK: Constructors
     
-    public override init() {
+    public init(fillColor: UIColor) {
         super.init(frame: .zero)
         
-        shapeLayer.lineWidth = 3.0
-        shapeLayer.strokeColor = JESPullToRefreshConstants.LoadingViewBackgroundColor.CGColor
-        shapeLayer.fillColor = UIColor.clearColor().CGColor
-        shapeLayer.actions = ["strokeEnd" : NSNull(), "transform" : NSNull()]
+        shapeLayer.lineWidth = 0.01
+        shapeLayer.strokeColor = UIColor.clearColor().CGColor
+        shapeLayer.fillColor = JESPullToRefreshConstants.LoadingViewBackgroundColor.CGColor
+        shapeLayer.actions = ["strokeEnd": NSNull(), "transform": NSNull()]
         layer.addSublayer(shapeLayer)
+        
+        self.insideView = JESPullToRefreshLoadingInsideViewCircle(fillColor: fillColor)
+        self.addSubview(insideView!)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -65,14 +95,25 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
     
     override public func setPullProgress(progress: CGFloat) {
         super.setPullProgress(progress)
-//        shapeLayer.lineWidth = (3 * progress + 3 * kMinProgress - 6) / (kMinProgress - 1)
-        print("\(progress)")
+        
+        let width = bounds.width
+        let height = bounds.height
+        let insideSize = abs((6 - width) * (progress * progress - 2 * progress))
+        
+        self.insideView?.frame = CGRect(x: width / 2.0, y: height / 2.0, width: insideSize, height: insideSize)
+        self.insideView?.center = CGPoint(x: width / 2.0, y: height / 2.0)
+        
+        if progress == 1.0 { startAnimating() }
     }
     
     override public func startAnimating() {
         super.startAnimating()
         
-//        if shapeLayer.animationForKey(kRotationAnimation) != nil { return }
+        // 如果正在执行动画 return
+        if shapeLayer.animationForKey(kRotationAnimation) != nil { return }
+        
+        // 创建颜色 layer
+        
         
 //        let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation.z")
 //        rotationAnimation.toValue = CGFloat(2 * M_PI) + currentDegree()
@@ -104,10 +145,9 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
     
     override public func layoutSubviews() {
         super.layoutSubviews()
-        
         shapeLayer.frame = bounds
+        shapeLayer.path = UIBezierPath(ovalInRect: shapeLayer.frame).CGPath
         
-        shapeLayer.path = UIBezierPath(arcCenter: CGPoint(x: frame.size.width / 2.0, y: frame.size.height / 2.0), radius: (frame.size.height - 6) / 2.0, startAngle: 0.0, endAngle: CGFloat(M_PI * 2.0), clockwise: true).CGPath
     }
     
 }

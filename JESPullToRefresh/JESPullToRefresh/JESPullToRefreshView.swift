@@ -242,10 +242,9 @@ public class JESPullToRefreshView: UIView {
                 state = .AnimatingBounce
             } else {
                 state = .Stopped
-                loadingView?.alpha = 1
             }
         } else if state.isAnyOf([.Dragging, .Stopped]) {
-            var pullProgress: CGFloat = min(offsetY / JESPullToRefreshConstants.MinOffsetToPull, 1.0)
+            var pullProgress: CGFloat = offsetY <= JESPullToRefreshConstants.LoadingViewMinOffsetY ? 0.0 : min(abs(offsetY - JESPullToRefreshConstants.LoadingViewMinOffsetY) / (JESPullToRefreshConstants.MinOffsetToPull), 1.0)
             if state == .Stopped { pullProgress = 0.0 }
             let height = bounds.height
             if height > 2 * JESPullToRefreshConstants.LoadingViewTopSpacing { loadingView?.setPullProgress(pullProgress) }
@@ -365,6 +364,7 @@ public class JESPullToRefreshView: UIView {
     // MARK: Layout
     
     private func layoutLoadingView() {
+        
         let width = bounds.width
         let height: CGFloat = bounds.height
         
@@ -372,9 +372,9 @@ public class JESPullToRefreshView: UIView {
         
         // Max origin Y of loading view
         let maxOriginY = (JESPullToRefreshConstants.LoadingContentInset - maxLoadingViewSize) / 2.0
-        let loadingViewSize: CGFloat = min(height < 3 ? 0 : height, maxLoadingViewSize)
         
-        let originY: CGFloat = min((height - loadingViewSize) / 2.0, maxOriginY)
+        let originY: CGFloat = min((maxOriginY / (JESPullToRefreshConstants.LoadingContentInset * JESPullToRefreshConstants.LoadingContentInset)) * height * height + 1, maxOriginY)
+        let loadingViewSize: CGFloat = min(max(height - 2 * originY, 0.0), maxLoadingViewSize)
         
         loadingView?.frame = CGRect(x: (width - loadingViewSize) / 2.0, y: originY, width: loadingViewSize, height: loadingViewSize)
         loadingView?.maskLayer.frame = convertRect(shapeLayer.frame, toView: loadingView)

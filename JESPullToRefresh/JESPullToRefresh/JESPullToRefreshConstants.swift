@@ -25,5 +25,5 @@ public struct JESPullToRefreshConstants {
     
     public static let LoadingViewBackgroundColor: UIColor = UIColor(red: 72 / 255.0, green: 70 / 255.0, blue: 109 / 255.0, alpha: 1.0)
     
-    public static let LoadingViewMinProgress: CGFloat = 0.203125
+    public static let LoadingViewMinOffsetY: CGFloat = 24.0
 }

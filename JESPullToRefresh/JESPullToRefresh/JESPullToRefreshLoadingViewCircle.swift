@@ -50,7 +50,6 @@ private class JESPullToRefreshLoadingInsideViewCircle: UIView {
         super.layoutSubviews()
         
         shapeLayer.frame = bounds
-        
         shapeLayer.path = UIBezierPath(ovalInRect: shapeLayer.frame).CGPath
     }
 }
@@ -66,9 +65,14 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
     private let kRotationAnimation = "kRotationAnimation"
     
     private let shapeLayer = CAShapeLayer()
-    private let insideShapeLayer = CAShapeLayer()
-    
     private var insideView: JESPullToRefreshLoadingInsideViewCircle?
+    
+    // MARK: -
+    // MARK: Rings
+    private let ringLayerT = CAShapeLayer()
+    private let ringLayerR = CAShapeLayer()
+    private let ringLayerX = CAShapeLayer()
+    private let ringLayerO = CAShapeLayer()
     
     // MARK: -
     // MARK: Constructors
@@ -112,16 +116,50 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
         // 如果正在执行动画 return
         if shapeLayer.animationForKey(kRotationAnimation) != nil { return }
         
-        // 创建颜色 layer
+        // 四色曲线
+        // 6CE4E8
+        // E5A8E1
+        // 7DA8F9
+        // FA6979
+        ringLayerT.lineWidth = 3.0
+        ringLayerT.strokeColor = UIColor(hex: 0x6CE4E8).CGColor
+        ringLayerT.fillColor = UIColor.clearColor().CGColor
+        shapeLayer.addSublayer(ringLayerT)
         
+        ringLayerT.strokeStart = 0
+        ringLayerT.strokeEnd = 0.25
         
-//        let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation.z")
-//        rotationAnimation.toValue = CGFloat(2 * M_PI) + currentDegree()
-//        rotationAnimation.duration = 1.0
-//        rotationAnimation.repeatCount = Float.infinity
-//        rotationAnimation.removedOnCompletion = false
-//        rotationAnimation.fillMode = kCAFillModeForwards
-//        shapeLayer.addAnimation(rotationAnimation, forKey: kRotationAnimation)
+        ringLayerR.lineWidth = 3.0
+        ringLayerR.strokeColor = UIColor(hex: 0xE5A8E1).CGColor
+        ringLayerR.fillColor = UIColor.clearColor().CGColor
+        shapeLayer.addSublayer(ringLayerR)
+        
+        ringLayerR.strokeStart = 0.25
+        ringLayerR.strokeEnd = 0.5
+        
+        ringLayerX.lineWidth = 3.0
+        ringLayerX.strokeColor = UIColor(hex: 0x7DA8F9).CGColor
+        ringLayerX.fillColor = UIColor.clearColor().CGColor
+        shapeLayer.addSublayer(ringLayerX)
+        
+        ringLayerX.strokeStart = 0.5
+        ringLayerX.strokeEnd = 0.75
+        
+        ringLayerO.lineWidth = 3.0
+        ringLayerO.strokeColor = UIColor(hex: 0xFA6979).CGColor
+        ringLayerO.fillColor = UIColor.clearColor().CGColor
+        shapeLayer.addSublayer(ringLayerO)
+        
+        ringLayerO.strokeStart = 0.75
+        ringLayerO.strokeEnd = 1.0
+        
+        let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation.z")
+        rotationAnimation.toValue = CGFloat(2 * M_PI) + currentDegree()
+        rotationAnimation.duration = 1.0
+        rotationAnimation.repeatCount = Float.infinity
+        rotationAnimation.removedOnCompletion = false
+        rotationAnimation.fillMode = kCAFillModeForwards
+        shapeLayer.addAnimation(rotationAnimation, forKey: kRotationAnimation)
     }
     
     override public func stopLoading() {
@@ -148,6 +186,18 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
         shapeLayer.frame = bounds
         shapeLayer.path = UIBezierPath(ovalInRect: shapeLayer.frame).CGPath
         
+        
+        let inset = ringLayerT.lineWidth / 2.0
+        ringLayerT.path = UIBezierPath(ovalInRect: CGRectInset(shapeLayer.bounds, inset, inset)).CGPath
+        ringLayerO.path = UIBezierPath(ovalInRect: CGRectInset(shapeLayer.bounds, inset, inset)).CGPath
+        ringLayerX.path = UIBezierPath(ovalInRect: CGRectInset(shapeLayer.bounds, inset, inset)).CGPath
+        ringLayerR.path = UIBezierPath(ovalInRect: CGRectInset(shapeLayer.bounds, inset, inset)).CGPath
     }
     
+}
+
+extension UIColor {
+    convenience init(hex: Int) {
+        self.init(red: CGFloat((hex & 0xFF0000) >> 16) / 255.0, green: CGFloat((hex & 0xFF00) >> 8) / 255.0, blue: CGFloat(hex & 0xFF) / 255.0, alpha: 1.0)
+    }
 }

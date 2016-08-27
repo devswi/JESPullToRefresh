@@ -166,6 +166,10 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
         super.stopLoading()
         
         shapeLayer.removeAnimationForKey(kRotationAnimation)
+        ringLayerO.removeFromSuperlayer()
+        ringLayerX.removeFromSuperlayer()
+        ringLayerR.removeFromSuperlayer()
+        ringLayerT.removeFromSuperlayer()
     }
     
     private func currentDegree() -> CGFloat {

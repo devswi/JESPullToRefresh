@@ -22,6 +22,7 @@ class ViewController: UIViewController {
         let loadingView = JESPullToRefreshLoadingViewCircle(fillColor: UIColor(red: 224/255.0, green: 231/255.0, blue: 235/255.0, alpha: 1.0))
         loadingView.tintColor = UIColor.whiteColor()
         tableView.jes_addPullToRefreshWithActionHandler({ [weak self] () -> Void in
+            self?.tableView.reloadData()
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1.5 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), {
                 self?.tableView.jes_stopLoading()
             })

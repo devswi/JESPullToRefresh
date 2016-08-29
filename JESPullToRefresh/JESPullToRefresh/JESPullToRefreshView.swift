@@ -377,8 +377,8 @@ public class JESPullToRefreshView: UIView {
         let loadingViewSize: CGFloat = min(max(height - 2 * originY, 0.0), maxLoadingViewSize)
         
         loadingView?.frame = CGRect(x: (width - loadingViewSize) / 2.0, y: originY, width: loadingViewSize, height: loadingViewSize)
-        loadingView?.maskLayer.frame = convertRect(shapeLayer.frame, toView: loadingView)
-        loadingView?.maskLayer.path = shapeLayer.path
+//        loadingView?.maskLayer.frame = convertRect(shapeLayer.frame, toView: loadingView)
+//        loadingView?.maskLayer.path = shapeLayer.path
         
         logoImageView.frame = CGRect(x: 0, y: originY + maxLoadingViewSize + 20, width: width, height: 108)
         logoImageView.maskLayer.frame = convertRect(shapeLayer.frame, toView: logoImageView)

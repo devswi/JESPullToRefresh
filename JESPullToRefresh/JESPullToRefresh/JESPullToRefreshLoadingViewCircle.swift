@@ -100,6 +100,10 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
     override public func setPullProgress(progress: CGFloat) {
         super.setPullProgress(progress)
         
+        if progress < 1.0 {
+            self.stopLoading()
+        }
+        
         let width = bounds.width
         let height = bounds.height
         let insideSize = abs((6 - width) * (progress * progress - 2 * progress))

@@ -121,7 +121,6 @@ public class JESPullToRefreshView: UIView {
         layer.addSublayer(shapeLayer)
         
         addSubview(bounceAnimationHelperView)
-        addSubview(controlPointView)
         addSubview(lControlPointView)
         addSubview(rControlPointView)
         
@@ -187,9 +186,7 @@ public class JESPullToRefreshView: UIView {
     
     func stopLoading() {
         // Prevent stop close animation
-        if state == .AnimatingToStopped {
-            return
-        }
+        if state == .AnimatingToStopped { return }
         state = .AnimatingToStopped
     }
     
@@ -221,7 +218,6 @@ public class JESPullToRefreshView: UIView {
         
         bezierPath.moveToPoint(CGPoint(x: 0.0, y: 0.0))
         bezierPath.addLineToPoint(lControlPointView.jes_center(animating))
-        bezierPath.addQuadCurveToPoint(rControlPointView.jes_center(animating), controlPoint: controlPointView.jes_center(animating))
         bezierPath.addLineToPoint(rControlPointView.jes_center(animating))
         bezierPath.addLineToPoint(CGPoint(x: width, y: 0.0))
         
@@ -236,7 +232,6 @@ public class JESPullToRefreshView: UIView {
         if state == .Stopped && dragging {
             state = .Dragging
             loadingView?.alpha = 1
-            alpha = 1
         } else if state == .Dragging && dragging == false {
             if offsetY >= JESPullToRefreshConstants.MinOffsetToPull {
                 state = .AnimatingBounce
@@ -266,10 +261,7 @@ public class JESPullToRefreshView: UIView {
         scrollView.jes_removeObserver(self, forKeyPath: JESPullToRefreshConstants.KeyPath.ContentInset)
         
         let animationBlock = {
-            if self.state == .AnimatingToStopped {
-                self.loadingView?.alpha = 0
-                self.alpha = 0
-            }
+            if self.state == .AnimatingToStopped { self.loadingView?.alpha = 0 }
             scrollView.contentInset = contentInset
         }
         let completionBlock = { () -> Void in
@@ -281,7 +273,7 @@ public class JESPullToRefreshView: UIView {
         
         if animated {
             startDisplayLink()
-            UIView.animateWithDuration(0.5, animations: animationBlock, completion: { _ in
+            UIView.animateWithDuration(0.2, animations: animationBlock, completion: { _ in
                 self.stopDisplayLink()
                 completionBlock()
             })
@@ -304,8 +296,8 @@ public class JESPullToRefreshView: UIView {
         startDisplayLink()
         scrollView.jes_removeObserver(self, forKeyPath: JESPullToRefreshConstants.KeyPath.ContentOffset)
         scrollView.jes_removeObserver(self, forKeyPath: JESPullToRefreshConstants.KeyPath.ContentInset)
+        
         UIView.animateWithDuration(duration, animations: { [weak self] in
-            self?.controlPointView.center.y = centerY
             self?.lControlPointView.center.y = centerY
             self?.rControlPointView.center.y = centerY
         }) { [weak self] _ in
@@ -377,8 +369,8 @@ public class JESPullToRefreshView: UIView {
         let loadingViewSize: CGFloat = min(max(height - 2 * originY, 0.0), maxLoadingViewSize)
         
         loadingView?.frame = CGRect(x: (width - loadingViewSize) / 2.0, y: originY, width: loadingViewSize, height: loadingViewSize)
-//        loadingView?.maskLayer.frame = convertRect(shapeLayer.frame, toView: loadingView)
-//        loadingView?.maskLayer.path = shapeLayer.path
+        loadingView?.maskLayer.frame = convertRect(shapeLayer.frame, toView: loadingView)
+        loadingView?.maskLayer.path = shapeLayer.path
         
         logoImageView.frame = CGRect(x: 0, y: originY + maxLoadingViewSize + 20, width: width, height: 108)
         logoImageView.maskLayer.frame = convertRect(shapeLayer.frame, toView: logoImageView)
@@ -390,17 +382,15 @@ public class JESPullToRefreshView: UIView {
         
         if let scrollView = scrollView() where state != .AnimatingBounce {
             let width = scrollView.bounds.width
-            let height = state == .AnimatingToStopped ? -scrollView.contentOffset.y :  currentHeight()
+            let height = currentHeight()
             
             frame = CGRect(x: 0.0, y: -height, width: width, height: height)
             
             // Loading || Stopped
             if state.isAnyOf([.Loading, .AnimatingToStopped]) {
-                controlPointView.center = CGPoint(x: width / 2.0, y: height)
                 lControlPointView.center = CGPoint(x: 0, y: height)
                 rControlPointView.center = CGPoint(x: width, y: height)
             } else {
-                controlPointView.center = CGPoint(x: width / 2.0, y: height)
                 lControlPointView.center = CGPoint(x: 0, y: height)
                 rControlPointView.center = CGPoint(x: width, y: height)
             }

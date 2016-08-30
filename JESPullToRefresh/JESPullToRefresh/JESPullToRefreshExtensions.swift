@@ -92,6 +92,12 @@ public extension UIScrollView {
         pullToRefreshView.observing = true
     }
     
+    /**
+     Add this method in your deinit() method to remove all the KVO
+     
+     - author: Shi Wei
+     - date: 16-08-30 23:08:28
+     */
     public func jes_removePullToRefresh() {
         pullToRefreshView?.disassociateDisplayLink()
         pullToRefreshView?.observing = false

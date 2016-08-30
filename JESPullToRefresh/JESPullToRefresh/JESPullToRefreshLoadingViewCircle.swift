@@ -157,6 +157,8 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
         ringLayerO.strokeStart = 0.75
         ringLayerO.strokeEnd = 1.0
         
+        shapeLayer.fillColor = UIColor.clearColor().CGColor
+        
         let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation.z")
         rotationAnimation.toValue = CGFloat(2 * M_PI) + currentDegree()
         rotationAnimation.duration = 1.0
@@ -174,6 +176,8 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
         ringLayerX.removeFromSuperlayer()
         ringLayerR.removeFromSuperlayer()
         ringLayerT.removeFromSuperlayer()
+        
+        shapeLayer.fillColor = JESPullToRefreshConstants.LoadingViewBackgroundColor.CGColor
     }
     
     private func currentDegree() -> CGFloat {

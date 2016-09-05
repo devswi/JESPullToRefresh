@@ -63,6 +63,7 @@ public extension UIScrollView {
     
     private struct jes_associatedKeys {
         static var pullToRefreshView = "pullToRefreshView"
+        static var slidForMoreView = "slidForMoreView"
     }
     
     private var pullToRefreshView: JESPullToRefreshView? {
@@ -121,7 +122,7 @@ public extension UIScrollView {
 // MARK: (UIView) Extension
 
 public extension UIView {
-    func jes_center(usePresentationLayerIfPossible: Bool) -> CGPoint {
+    func jes_center(usePresentationLayerIfPossible: Bool = false) -> CGPoint {
         if usePresentationLayerIfPossible, let presentationLayer = layer.presentationLayer() as? CALayer { return presentationLayer.position }
         return center
     }

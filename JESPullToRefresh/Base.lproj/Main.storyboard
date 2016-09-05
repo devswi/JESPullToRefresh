@@ -33,7 +33,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="uFD-xl-cbR">
+                            <tableView hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="uFD-xl-cbR">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -83,17 +83,40 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pqe-Nj-0we">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vOF-TX-uLS" customClass="JESRefreshView" customModule="JESPullToRefresh" customModuleProvider="target">
+                                        <rect key="frame" x="280" y="280" width="40" height="40"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="Hdr-5e-B09"/>
+                                            <constraint firstAttribute="height" constant="40" id="M3x-ry-68r"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" red="0.90196078430000004" green="0.8980392157" blue="0.94509803920000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="vOF-TX-uLS" firstAttribute="centerY" secondItem="Pqe-Nj-0we" secondAttribute="centerY" id="V9h-1n-3DH"/>
+                                    <constraint firstItem="vOF-TX-uLS" firstAttribute="centerX" secondItem="Pqe-Nj-0we" secondAttribute="centerX" id="ysz-Wv-UxE"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="uFD-xl-cbR" secondAttribute="trailing" id="0nT-id-Miq"/>
+                            <constraint firstItem="V3N-oX-EuZ" firstAttribute="top" secondItem="Pqe-Nj-0we" secondAttribute="bottom" id="1c5-Dm-wxu"/>
+                            <constraint firstAttribute="trailing" secondItem="Pqe-Nj-0we" secondAttribute="trailing" id="2iR-y3-el0"/>
                             <constraint firstItem="uFD-xl-cbR" firstAttribute="top" secondItem="1pt-07-VUK" secondAttribute="top" id="4li-IY-fbw"/>
+                            <constraint firstItem="Pqe-Nj-0we" firstAttribute="top" secondItem="1pt-07-VUK" secondAttribute="top" id="Hhd-4s-MUN"/>
                             <constraint firstItem="uFD-xl-cbR" firstAttribute="leading" secondItem="1pt-07-VUK" secondAttribute="leading" id="QuO-nj-Gsp"/>
                             <constraint firstItem="V3N-oX-EuZ" firstAttribute="top" secondItem="uFD-xl-cbR" secondAttribute="bottom" id="ofx-pt-1UF"/>
+                            <constraint firstItem="Pqe-Nj-0we" firstAttribute="leading" secondItem="1pt-07-VUK" secondAttribute="leading" id="u4x-Qi-mQn"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="z2h-ep-kVp"/>
                     <connections>
+                        <outlet property="refreshView" destination="vOF-TX-uLS" id="dCf-6b-9BF"/>
                         <outlet property="tableView" destination="uFD-xl-cbR" id="GHe-hc-jZ4"/>
                     </connections>
                 </viewController>

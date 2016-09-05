@@ -11,9 +11,13 @@ import UIKit
 class ViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
-
+    @IBOutlet weak var refreshView: JESRefreshView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        refreshView.layoutIfNeeded()
+        refreshView.animate()
         
         tableView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         tableView.separatorColor = UIColor(red: 230/255.0, green: 230/255.0, blue: 231/255.0, alpha: 1.0)

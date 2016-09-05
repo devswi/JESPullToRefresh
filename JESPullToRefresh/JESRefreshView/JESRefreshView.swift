@@ -13,8 +13,8 @@ enum State {
     case Mark
 }
 
-let jumpDuration: Double = 0.125
-let downDuration: Double = 0.215
+let jumpDuration: Double = 0.235
+let downDuration: Double = 0.475
 let shadowScale: CGFloat = 1.6
 
 class JESRefreshView: UIView {
@@ -31,6 +31,8 @@ class JESRefreshView: UIView {
     private var starView: UIImageView?
     private var shadowView: UIImageView?
     private var shadowWidth: CGFloat = 0
+    
+    private var displayLink: CADisplayLink!
     
     init() {
         super.init(frame: CGRect())
@@ -51,6 +53,11 @@ class JESRefreshView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         self.backgroundColor = UIColor.clearColor()
+        
+        displayLink = CADisplayLink(target: self, selector: #selector(JESRefreshView.displayLinkFunction))
+        displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
+        displayLink.paused = true
+        
         if self.starView == nil {
             self.starView = UIImageView(frame: CGRect(x: self.bounds.size.width / 2 - (self.bounds.size.width - 6) / 2, y: 0, width: self.bounds.size.width - 6, height: self.bounds.size.width - 6))
             self.starView?.contentMode = .ScaleToFill
@@ -67,9 +74,9 @@ class JESRefreshView: UIView {
     }
     
     func animate() {
-        if animating {
-            return
-        }
+        if animating { return }
+        startDisplayLink()
+        
         animating = true
         
         let transformAnimation = CABasicAnimation(keyPath: "transform.rotation.y")
@@ -92,14 +99,35 @@ class JESRefreshView: UIView {
         self.starView?.layer.addAnimation(animationGroup, forKey: "jumpUp")
     }
     
+    // MARK: -
+    // MARK: CADisplayLink
+    
+    private func startDisplayLink() {
+        displayLink.paused = false
+    }
+    
+    private func stopDisplayLink() {
+        displayLink.paused = true
+    }
+    
+    func displayLinkFunction() {
+        animate()
+    }
+    
+    // MARK: -
+    
+    func disassociateDisplayLink() {
+        displayLink?.invalidate()
+    }
+    
     override func animationDidStart(anim: CAAnimation) {
         if anim.isEqual(self.starView?.layer.animationForKey("jumpUp")) {
-            UIView.animateWithDuration(jumpDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
+            UIView.animateWithDuration(jumpDuration, delay: 0, options: .CurveEaseOut, animations: { () -> Void in
                 self.shadowView!.alpha = 0.2
                 self.shadowView!.bounds = CGRect(x: 0, y: 0, width: self.shadowView!.bounds.size.width / shadowScale, height: self.shadowView!.bounds.size.height)
                 }, completion: nil)
         } else if anim.isEqual(self.starView?.layer.animationForKey("jumpDown")) {
-            UIView.animateWithDuration(jumpDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
+            UIView.animateWithDuration(jumpDuration, delay: 0, options: .CurveEaseOut, animations: { () -> Void in
                 self.shadowView!.alpha = 0.4
                 self.shadowView!.bounds = CGRect(x: 0, y: 0, width: self.shadowView!.bounds.size.width * shadowScale, height: self.shadowView!.bounds.size.height)
                 }, completion: nil)

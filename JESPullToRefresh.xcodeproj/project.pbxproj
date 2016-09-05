@@ -14,6 +14,9 @@
 		C4727EA01D7D6F7D007C03C0 /* jes_refresh_star@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C4727E9A1D7D6F7D007C03C0 /* jes_refresh_star@2x.png */; };
 		C4727EA11D7D6F7D007C03C0 /* jes_refresh_star@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C4727E9B1D7D6F7D007C03C0 /* jes_refresh_star@3x.png */; };
 		C4727EA31D7D6F88007C03C0 /* JESRefreshView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4727EA21D7D6F88007C03C0 /* JESRefreshView.swift */; };
+		C4727EA51D7DB4DD007C03C0 /* JESRefreshIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4727EA41D7DB4DD007C03C0 /* JESRefreshIcon.swift */; };
+		C4727EA81D7DB630007C03C0 /* jes_loading_shadow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C4727EA61D7DB630007C03C0 /* jes_loading_shadow@2x.png */; };
+		C4727EA91D7DB630007C03C0 /* jes_loading_shadow@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C4727EA71D7DB630007C03C0 /* jes_loading_shadow@3x.png */; };
 		C477099C1D631EC20085022C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C477099B1D631EC20085022C /* AppDelegate.swift */; };
 		C477099E1D631EC20085022C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C477099D1D631EC20085022C /* ViewController.swift */; };
 		C47709A11D631EC20085022C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C477099F1D631EC20085022C /* Main.storyboard */; };
@@ -34,6 +37,9 @@
 		C4727E9A1D7D6F7D007C03C0 /* jes_refresh_star@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "jes_refresh_star@2x.png"; sourceTree = "<group>"; };
 		C4727E9B1D7D6F7D007C03C0 /* jes_refresh_star@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "jes_refresh_star@3x.png"; sourceTree = "<group>"; };
 		C4727EA21D7D6F88007C03C0 /* JESRefreshView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JESRefreshView.swift; sourceTree = "<group>"; };
+		C4727EA41D7DB4DD007C03C0 /* JESRefreshIcon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JESRefreshIcon.swift; sourceTree = "<group>"; };
+		C4727EA61D7DB630007C03C0 /* jes_loading_shadow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "jes_loading_shadow@2x.png"; sourceTree = "<group>"; };
+		C4727EA71D7DB630007C03C0 /* jes_loading_shadow@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "jes_loading_shadow@3x.png"; sourceTree = "<group>"; };
 		C47709981D631EC20085022C /* JESPullToRefresh.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JESPullToRefresh.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C477099B1D631EC20085022C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C477099D1D631EC20085022C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -64,6 +70,7 @@
 			children = (
 				C4727E951D7D6F7D007C03C0 /* Resource */,
 				C4727EA21D7D6F88007C03C0 /* JESRefreshView.swift */,
+				C4727EA41D7DB4DD007C03C0 /* JESRefreshIcon.swift */,
 			);
 			path = JESRefreshView;
 			sourceTree = "<group>";
@@ -71,6 +78,8 @@
 		C4727E951D7D6F7D007C03C0 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				C4727EA61D7DB630007C03C0 /* jes_loading_shadow@2x.png */,
+				C4727EA71D7DB630007C03C0 /* jes_loading_shadow@3x.png */,
 				C4727E961D7D6F7D007C03C0 /* jes_refresh_circle@2x.png */,
 				C4727E971D7D6F7D007C03C0 /* jes_refresh_circle@3x.png */,
 				C4727E981D7D6F7D007C03C0 /* jes_refresh_shadow@2x.png */,
@@ -184,11 +193,13 @@
 			files = (
 				C4727EA11D7D6F7D007C03C0 /* jes_refresh_star@3x.png in Resources */,
 				C4727E9C1D7D6F7D007C03C0 /* jes_refresh_circle@2x.png in Resources */,
+				C4727EA81D7DB630007C03C0 /* jes_loading_shadow@2x.png in Resources */,
 				C4727E9F1D7D6F7D007C03C0 /* jes_refresh_shadow@3x.png in Resources */,
 				C4727EA01D7D6F7D007C03C0 /* jes_refresh_star@2x.png in Resources */,
 				C4727E9D1D7D6F7D007C03C0 /* jes_refresh_circle@3x.png in Resources */,
 				C4727E9E1D7D6F7D007C03C0 /* jes_refresh_shadow@2x.png in Resources */,
 				C47709A61D631EC20085022C /* LaunchScreen.storyboard in Resources */,
+				C4727EA91D7DB630007C03C0 /* jes_loading_shadow@3x.png in Resources */,
 				C47709A31D631EC20085022C /* Assets.xcassets in Resources */,
 				C47709A11D631EC20085022C /* Main.storyboard in Resources */,
 			);
@@ -203,6 +214,7 @@
 			files = (
 				C49659A31D63535C00E952DE /* JESPullToRefreshExtensions.swift in Sources */,
 				C49659A91D635AF900E952DE /* JESPullToRefreshLoadingViewCircle.swift in Sources */,
+				C4727EA51D7DB4DD007C03C0 /* JESRefreshIcon.swift in Sources */,
 				C477099E1D631EC20085022C /* ViewController.swift in Sources */,
 				C49659A51D63588F00E952DE /* JESPullToRefreshLoadingView.swift in Sources */,
 				C49659A11D63521B00E952DE /* JESPullToRefreshConstants.swift in Sources */,

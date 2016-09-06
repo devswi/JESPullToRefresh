@@ -8,34 +8,24 @@
 
 import UIKit
 
-enum State {
-    case non_Mark
-    case Mark
-}
-
-let jumpDuration: Double = 0.235
-let downDuration: Double = 0.475
-let shadowScale: CGFloat = 1.6
-
 class JESRefreshView: UIView {
-
-    private var state: State = .non_Mark {
-        willSet {
-            self.starView?.image = self.state == .Mark ? self.markedImage : self.non_markedImage
-        }
+    
+    private var loadingViewO: JESRefreshIcon?
+    private var loadingViewR: JESRefreshIcon?
+    private var loadingViewT: JESRefreshIcon?
+    private var loadingViewX: JESRefreshIcon?
+    
+    private var loadingViews: [JESRefreshIcon] = []
+    
+    private struct Constants {
+        static let iconSize: CGFloat = 32
     }
-    private var animating: Bool = false
     
-    private var markedImage: UIImage = UIImage(named: "jes_refresh_star")!
-    private var non_markedImage: UIImage = UIImage(named: "jes_refresh_circle")!
-    private var starView: UIImageView?
-    private var shadowView: UIImageView?
-    private var shadowWidth: CGFloat = 0
-    
-    private var displayLink: CADisplayLink!
-    
-    init() {
-        super.init(frame: CGRect())
+    convenience init() {
+        
+        self.init(frame: CGRect())
+        
+        self.layoutSubviews()
     }
     
     override func awakeFromNib() {
@@ -54,114 +44,52 @@ class JESRefreshView: UIView {
         super.layoutSubviews()
         self.backgroundColor = UIColor.clearColor()
         
-        displayLink = CADisplayLink(target: self, selector: #selector(JESRefreshView.displayLinkFunction))
-        displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
-        displayLink.paused = true
-        
-        if self.starView == nil {
-            self.starView = UIImageView(frame: CGRect(x: self.bounds.size.width / 2 - (self.bounds.size.width - 6) / 2, y: 0, width: self.bounds.size.width - 6, height: self.bounds.size.width - 6))
-            self.starView?.contentMode = .ScaleToFill
-            self.starView?.image = self.markedImage
-            self.addSubview(self.starView!)
+        if self.loadingViewO == nil {
+            self.loadingViewO = JESRefreshIcon(withMarkedImageName: "jes_loading_o", initialState: .up(offsetY: 10))
+            self.addSubview(self.loadingViewO!)
+            
+            self.loadingViews.append(self.loadingViewO!)
         }
-        if self.shadowView == nil {
-            self.shadowWidth = self.frame.size.width - 10
-            self.shadowView = UIImageView(frame: CGRect(x: (self.frame.size.width - shadowWidth) / 2, y: self.frame.size.height - 3, width: shadowWidth, height: 3))
-            self.shadowView?.alpha = 0.4
-            self.shadowView?.image = UIImage(named: "jes_refresh_shadow")
-            self.addSubview(self.shadowView!)
+        if self.loadingViewR == nil {
+            self.loadingViewR = JESRefreshIcon(withMarkedImageName: "jes_loading_r", initialState: .down(offsetY: 16))
+            self.addSubview(self.loadingViewR!)
+            self.loadingViews.append(self.loadingViewR!)
         }
-    }
-    
-    func animate() {
-        if animating { return }
-        startDisplayLink()
+        if self.loadingViewT == nil {
+            self.loadingViewT = JESRefreshIcon(withMarkedImageName: "jes_loading_t", initialState: .up(offsetY: 0))
+            self.addSubview(self.loadingViewT!)
+            self.loadingViews.append(self.loadingViewT!)
+        }
+        if self.loadingViewX == nil {
+            self.loadingViewX = JESRefreshIcon(withMarkedImageName: "jes_loading_x", initialState: .down(offsetY: 5))
+            self.addSubview(self.loadingViewX!)
+            self.loadingViews.append(self.loadingViewX!)
+        }
         
-        animating = true
-        
-        let transformAnimation = CABasicAnimation(keyPath: "transform.rotation.y")
-        transformAnimation.fromValue = 0
-        transformAnimation.toValue = M_PI_2
-        transformAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-        
-        let positionAnimation = CABasicAnimation(keyPath: "position.y")
-        positionAnimation.fromValue = self.starView!.center.y
-        positionAnimation.toValue = self.starView!.center.y - 14
-        positionAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-        
-        let animationGroup = CAAnimationGroup()
-        animationGroup.duration = jumpDuration
-        animationGroup.fillMode = kCAFillModeForwards
-        animationGroup.removedOnCompletion = false
-        animationGroup.delegate = self
-        animationGroup.animations = [transformAnimation, positionAnimation]
-        
-        self.starView?.layer.addAnimation(animationGroup, forKey: "jumpUp")
+        self.layoutFrames()
     }
     
-    // MARK: -
-    // MARK: CADisplayLink
-    
-    private func startDisplayLink() {
-        displayLink.paused = false
-    }
-    
-    private func stopDisplayLink() {
-        displayLink.paused = true
-    }
-    
-    func displayLinkFunction() {
-        animate()
-    }
-    
-    // MARK: -
-    
-    func disassociateDisplayLink() {
-        displayLink?.invalidate()
-    }
-    
-    override func animationDidStart(anim: CAAnimation) {
-        if anim.isEqual(self.starView?.layer.animationForKey("jumpUp")) {
-            UIView.animateWithDuration(jumpDuration, delay: 0, options: .CurveEaseOut, animations: { () -> Void in
-                self.shadowView!.alpha = 0.2
-                self.shadowView!.bounds = CGRect(x: 0, y: 0, width: self.shadowView!.bounds.size.width / shadowScale, height: self.shadowView!.bounds.size.height)
-                }, completion: nil)
-        } else if anim.isEqual(self.starView?.layer.animationForKey("jumpDown")) {
-            UIView.animateWithDuration(jumpDuration, delay: 0, options: .CurveEaseOut, animations: { () -> Void in
-                self.shadowView!.alpha = 0.4
-                self.shadowView!.bounds = CGRect(x: 0, y: 0, width: self.shadowView!.bounds.size.width * shadowScale, height: self.shadowView!.bounds.size.height)
-                }, completion: nil)
+    private func layoutFrames() {
+        self.loadingViews.forEach { icon in
+            let index: Int = self.loadingViews.indexOf(icon) ?? 0
+            let x = CGFloat(index) * icon.bounds.width
+            var frame = icon.frame
+            frame.origin.x = x
+            icon.frame = frame
         }
     }
     
-    // 下落动画
-    override func animationDidStop(anim: CAAnimation, finished flag: Bool) {
-        if anim.isEqual(self.starView?.layer.animationForKey("jumpUp")) {
-            self.state = self.state == .Mark ? .non_Mark : .Mark
-            let transformAnimation: CABasicAnimation = CABasicAnimation(keyPath: "transform.rotation.y")
-            transformAnimation.fromValue = M_PI_2
-            transformAnimation.toValue = M_PI
-            transformAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-            
-            let positionAnimation: CABasicAnimation = CABasicAnimation(keyPath: "position.y")
-            positionAnimation.fromValue = self.starView!.center.y - 14
-            positionAnimation.toValue = self.starView!.center.y
-            positionAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
-            
-            let animationGroup = CAAnimationGroup()
-            animationGroup.duration = downDuration
-            animationGroup.fillMode = kCAFillModeForwards
-            animationGroup.removedOnCompletion = false
-            animationGroup.delegate = self
-            animationGroup.animations = [transformAnimation, positionAnimation]
-            
-            self.starView!.layer.addAnimation(animationGroup, forKey: "jumpDown")
-            
-        } else if anim.isEqual(self.starView?.layer.animationForKey("jumpDown")) {
-            self.starView!.layer.removeAllAnimations()
-            animating = false
+    func animating() {
+        self.loadingViews.forEach { icon in
+            icon.animate()
         }
-        
     }
+    
+    func stopAnimat() {
+        self.loadingViews.forEach {
+            $0.stopAnimate()
+        }
+    }
+    
     
 }

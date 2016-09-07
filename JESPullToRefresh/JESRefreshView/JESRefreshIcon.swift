@@ -9,27 +9,13 @@
 import UIKit
 
 enum InitialState {
-    case up(offsetY: CGFloat)
-    case down(offsetY: CGFloat)
+    case up(beginTime: Double)
+    case down
     
-    func getOffsetY() -> CGFloat {
+    func animationBeginTime() -> Double {
         switch self {
-        case .up(offsetY: let offsetY): return offsetY
-        case .down(offsetY: let offsetY): return offsetY
-        }
-    }
-    
-    func initialDirecton() -> String {
-        switch self {
-        case .up(offsetY: _): return "jumpUp"
-        case .down(offsetY: _): return "jumpDown"
-        }
-    }
-    
-    func nextDirection() -> String {
-        switch self {
-        case .up(offsetY: _): return "jumpDown"
-        case .down(offsetY: _): return "jumpUp"
+        case .down: return 0
+        case .up(beginTime: let time): return time
         }
     }
 }
@@ -49,13 +35,14 @@ class JESRefreshIcon: UIView {
     
     private var animating: Bool = false
     
-    private var state: InitialState = .up(offsetY: 0.0)
+    private var state: InitialState = .up(beginTime: 0.0)
     private var offsetY: CGFloat = 0.0
+    private var beginTime: Double = 0.0
     
     private struct JESRefreshIconConstants {
         static let shadowImageName: String = "jes_loading_shadow"
         static let iconSize: CGFloat = 32
-        static let maxOffsetY: CGFloat = 16
+        static let maxOffsetY: CGFloat = 14
         
         // MARK: - Animation
         static let jumpDuration: Double = 0.235
@@ -76,7 +63,7 @@ class JESRefreshIcon: UIView {
         self.iconSize = JESRefreshIconConstants.iconSize
         self.markedImage = UIImage(named: name)!
         self.layoutIcon()
-        
+        self.animate()
     }
     
     override init(frame: CGRect) {
@@ -90,15 +77,11 @@ class JESRefreshIcon: UIView {
     private func layoutIcon() {
         self.backgroundColor = UIColor.clearColor()
         
-        displayLink = CADisplayLink(target: self, selector: #selector(JESRefreshIcon.displayLinkTick))
-        displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
-        displayLink.paused = true
-        
         let size: CGFloat = self.iconSize - 2 * JESRefreshIconConstants.IconConstants.markedSpacing
         let offsetX: CGFloat = JESRefreshIconConstants.IconConstants.markedSpacing
         
         self.markedImageView = UIImageView(frame: CGRect(x: offsetX,
-                y: -self.state.getOffsetY(),
+                y: 0,
             width: size,
            height: size))
         self.markedImageView?.image = self.markedImage
@@ -112,91 +95,56 @@ class JESRefreshIcon: UIView {
     }
     
     func animate() {
-        if animating { return }
-        startDisplayLink()
         
-        animating = true
+        let upAnimation = CABasicAnimation(keyPath: "position.y")
+        upAnimation.fromValue = self.markedImageView!.center.y
+        upAnimation.toValue = self.markedImageView!.center.y - JESRefreshIconConstants.maxOffsetY
+        upAnimation.duration = JESRefreshIconConstants.jumpDuration
+        upAnimation.beginTime = 0
+        upAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
         
-        let positionAnimation = CABasicAnimation(keyPath: "position.y")
-        positionAnimation.fromValue = self.markedImageView!.center.y
-        positionAnimation.toValue =  -JESRefreshIconConstants.maxOffsetY
-        positionAnimation.duration = JESRefreshIconConstants.jumpDuration
-        positionAnimation.fillMode = kCAFillModeForwards
-        positionAnimation.removedOnCompletion = false
-        positionAnimation.delegate = self
-        positionAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+        let downAnimation = CABasicAnimation(keyPath: "position.y")
+        downAnimation.fromValue = self.markedImageView!.center.y - JESRefreshIconConstants.maxOffsetY
+        downAnimation.toValue = self.markedImageView!.center.y
+        downAnimation.duration = JESRefreshIconConstants.downDuration
+        downAnimation.beginTime = JESRefreshIconConstants.jumpDuration
+        downAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
         
-        self.markedImageView!.layer.addAnimation(positionAnimation, forKey: self.state.initialDirecton())
-    }
-    
-    private func startDisplayLink() {
-        displayLink.paused = false
-    }
-    
-    private func stopDisplayLink() {
-        displayLink.paused = true
+        let animationGroup = CAAnimationGroup()
+        animationGroup.animations = [upAnimation, downAnimation]
+        animationGroup.duration = JESRefreshIconConstants.jumpDuration + JESRefreshIconConstants.downDuration
+        animationGroup.beginTime = self.state.animationBeginTime()
+        animationGroup.fillMode = kCAFillModeForwards
+        animationGroup.repeatCount = Float.infinity
+        animationGroup.removedOnCompletion = false
+        animationGroup.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
         
-        self.markedImageView!.layer.removeAllAnimations()
-        animating = false
-    }
-    
-    func stopAnimate() {
-        self.stopDisplayLink()
-    }
-    
-    // MARK
-    // MARK: Display Link
-    func displayLinkTick() {
-        animate()
-    }
-    
-    // MARK: -
-    
-    func disassociateDisplayLink() {
-        displayLink?.invalidate()
-    }
-    
-    override func animationDidStart(anim: CAAnimation) {
-        if anim.isEqual(self.markedImageView?.layer.animationForKey("jumpUp")) {
-            UIView.animateWithDuration(JESRefreshIconConstants.jumpDuration, delay: 0, options: .CurveEaseOut, animations: { () -> Void in
-                self.shadowImageView!.bounds = CGRect(x: 0, y: 0, width: self.shadowImageView!.bounds.size.width / JESRefreshIconConstants.shadowScale, height: self.shadowImageView!.bounds.size.height)
-                }, completion: nil)
-        } else if anim.isEqual(self.markedImageView?.layer.animationForKey("jumpDown")) {
-            UIView.animateWithDuration(JESRefreshIconConstants.downDuration, delay: 0, options: .CurveEaseOut, animations: { () -> Void in
-                self.shadowImageView!.bounds = CGRect(x: 0, y: 0, width: self.shadowImageView!.bounds.size.width * JESRefreshIconConstants.shadowScale, height: self.shadowImageView!.bounds.size.height)
-                }, completion: nil)
-        }
-    }
-    
-    // 下落动画
-    override func animationDidStop(anim: CAAnimation, finished flag: Bool) {
-        if anim.isEqual(self.markedImageView?.layer.animationForKey("jumpUp")) {
-            
-            let positionAnimation: CABasicAnimation = CABasicAnimation(keyPath: "position.y")
-            positionAnimation.fromValue = -JESRefreshIconConstants.maxOffsetY
-            positionAnimation.toValue = 0
-            positionAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
-            positionAnimation.duration = JESRefreshIconConstants.downDuration
-            positionAnimation.fillMode = kCAFillModeForwards
-            positionAnimation.removedOnCompletion = false
-            positionAnimation.delegate = self
-            
-            self.markedImageView!.layer.addAnimation(positionAnimation, forKey: "jumpDown")
-            
-        } else if anim.isEqual(self.markedImageView?.layer.animationForKey("jumpDown")) {
-            
-            let positionAnimation: CABasicAnimation = CABasicAnimation(keyPath: "position.y")
-            positionAnimation.fromValue = 0
-            positionAnimation.toValue = -JESRefreshIconConstants.maxOffsetY
-            positionAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
-            positionAnimation.duration = JESRefreshIconConstants.downDuration
-            positionAnimation.fillMode = kCAFillModeForwards
-            positionAnimation.removedOnCompletion = false
-            positionAnimation.delegate = self
-            
-            self.markedImageView!.layer.addAnimation(positionAnimation, forKey: "jumpUp")
-        }
+        self.markedImageView!.layer.addAnimation(animationGroup, forKey: "image.animation.key")
         
+        let smallAnimation = CABasicAnimation(keyPath: "bounds.size.width")
+        smallAnimation.fromValue = self.markedImageView!.bounds.width
+        smallAnimation.toValue = self.markedImageView!.bounds.width / JESRefreshIconConstants.shadowScale
+        smallAnimation.duration = JESRefreshIconConstants.jumpDuration
+        smallAnimation.beginTime = 0
+        smallAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+        
+        let bigAnimation = CABasicAnimation(keyPath: "bounds.size.width")
+        bigAnimation.fromValue = self.markedImageView!.bounds.width / JESRefreshIconConstants.shadowScale
+        bigAnimation.toValue = self.markedImageView!.bounds.width
+        bigAnimation.duration = JESRefreshIconConstants.downDuration
+        bigAnimation.beginTime = JESRefreshIconConstants.jumpDuration
+        bigAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
+        
+        let shadowAnimationGroup = CAAnimationGroup()
+        shadowAnimationGroup.animations = [smallAnimation, bigAnimation]
+        shadowAnimationGroup.duration = JESRefreshIconConstants.jumpDuration + JESRefreshIconConstants.downDuration
+        shadowAnimationGroup.beginTime = self.state.animationBeginTime()
+        shadowAnimationGroup.fillMode = kCAFillModeForwards
+        shadowAnimationGroup.repeatCount = Float.infinity
+        shadowAnimationGroup.removedOnCompletion = false
+        shadowAnimationGroup.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
+        
+        self.shadowImageView!.layer.addAnimation(shadowAnimationGroup, forKey: "shadow.animation.key")
     }
 
 }

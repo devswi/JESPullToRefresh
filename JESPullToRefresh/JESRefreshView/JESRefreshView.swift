@@ -45,51 +45,47 @@ class JESRefreshView: UIView {
         self.backgroundColor = UIColor.clearColor()
         
         if self.loadingViewO == nil {
-            self.loadingViewO = JESRefreshIcon(withMarkedImageName: "jes_loading_o", initialState: .up(offsetY: 10))
+            self.loadingViewO = JESRefreshIcon(withMarkedImageName: "jes_loading_o", initialState: .up(beginTime: 0))
             self.addSubview(self.loadingViewO!)
             
             self.loadingViews.append(self.loadingViewO!)
         }
         if self.loadingViewR == nil {
-            self.loadingViewR = JESRefreshIcon(withMarkedImageName: "jes_loading_r", initialState: .down(offsetY: 16))
+            self.loadingViewR = JESRefreshIcon(withMarkedImageName: "jes_loading_r", initialState: .up(beginTime: 0.235))
             self.addSubview(self.loadingViewR!)
             self.loadingViews.append(self.loadingViewR!)
         }
         if self.loadingViewT == nil {
-            self.loadingViewT = JESRefreshIcon(withMarkedImageName: "jes_loading_t", initialState: .up(offsetY: 0))
+            self.loadingViewT = JESRefreshIcon(withMarkedImageName: "jes_loading_t", initialState: .up(beginTime: 0.175))
             self.addSubview(self.loadingViewT!)
             self.loadingViews.append(self.loadingViewT!)
         }
         if self.loadingViewX == nil {
-            self.loadingViewX = JESRefreshIcon(withMarkedImageName: "jes_loading_x", initialState: .down(offsetY: 5))
+            self.loadingViewX = JESRefreshIcon(withMarkedImageName: "jes_loading_x", initialState: .up(beginTime: 0.385))
             self.addSubview(self.loadingViewX!)
             self.loadingViews.append(self.loadingViewX!)
         }
         
         self.layoutFrames()
+        
+        // MARK: -
+        // MARK: 
     }
     
     private func layoutFrames() {
         self.loadingViews.forEach { icon in
             let index: Int = self.loadingViews.indexOf(icon) ?? 0
-            let x = CGFloat(index) * icon.bounds.width
+            let x = CGFloat(index) * (icon.bounds.width + 5)
             var frame = icon.frame
             frame.origin.x = x
             icon.frame = frame
         }
     }
     
-    func animating() {
-        self.loadingViews.forEach { icon in
-            icon.animate()
+    func animate() {
+        UIView.animateWithDuration(0.35) {
+            self.alpha = 1.0
         }
     }
-    
-    func stopAnimat() {
-        self.loadingViews.forEach {
-            $0.stopAnimate()
-        }
-    }
-    
     
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C429EE2B1D8103A500B58295 /* JESPullToRefreshTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C429EE2A1D8103A500B58295 /* JESPullToRefreshTableView.swift */; };
 		C46744391D7EF8F60015554B /* jes_loading_o@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C46744311D7EF8F60015554B /* jes_loading_o@2x.png */; };
 		C467443A1D7EF8F60015554B /* jes_loading_o@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C46744321D7EF8F60015554B /* jes_loading_o@3x.png */; };
 		C467443B1D7EF8F60015554B /* jes_loading_r@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C46744331D7EF8F60015554B /* jes_loading_r@2x.png */; };
@@ -32,6 +33,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C429EE2A1D8103A500B58295 /* JESPullToRefreshTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JESPullToRefreshTableView.swift; sourceTree = "<group>"; };
 		C46744311D7EF8F60015554B /* jes_loading_o@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "jes_loading_o@2x.png"; sourceTree = "<group>"; };
 		C46744321D7EF8F60015554B /* jes_loading_o@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "jes_loading_o@3x.png"; sourceTree = "<group>"; };
 		C46744331D7EF8F60015554B /* jes_loading_r@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "jes_loading_r@2x.png"; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 				C49659A41D63588F00E952DE /* JESPullToRefreshLoadingView.swift */,
 				C49659A61D63598500E952DE /* JESPullToRefreshView.swift */,
 				C49659A81D635AF900E952DE /* JESPullToRefreshLoadingViewCircle.swift */,
+				C429EE2A1D8103A500B58295 /* JESPullToRefreshTableView.swift */,
 			);
 			path = JESPullToRefresh;
 			sourceTree = "<group>";
@@ -228,6 +231,7 @@
 				C49659A11D63521B00E952DE /* JESPullToRefreshConstants.swift in Sources */,
 				C477099C1D631EC20085022C /* AppDelegate.swift in Sources */,
 				C4727EA31D7D6F88007C03C0 /* JESRefreshView.swift in Sources */,
+				C429EE2B1D8103A500B58295 /* JESPullToRefreshTableView.swift in Sources */,
 				C49659A71D63598500E952DE /* JESPullToRefreshView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

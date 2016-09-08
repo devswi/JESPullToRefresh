@@ -34,6 +34,7 @@ class JESRefreshView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.layoutSubviews()
     }
     
     required init?(coder aDecoder: NSCoder) {

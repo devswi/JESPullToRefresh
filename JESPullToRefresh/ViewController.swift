@@ -15,26 +15,21 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.showLoading()
+        self.showPreLoading()
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(2.5 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), {
-            self.dismissLoading()
+            self.dismissPreLoading()
         })
         
         tableView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         tableView.separatorColor = UIColor(red: 230/255.0, green: 230/255.0, blue: 231/255.0, alpha: 1.0)
         tableView.backgroundColor = UIColor(red: 250/255.0, green: 250/255.0, blue: 251/255.0, alpha: 1.0)
         
-        let loadingView = JESPullToRefreshLoadingViewCircle(fillColor: UIColor(red: 224/255.0, green: 231/255.0, blue: 235/255.0, alpha: 1.0))
-        loadingView.tintColor = UIColor.whiteColor()
-        tableView.jes_addPullToRefreshWithActionHandler({ [weak self] () -> Void in
-            self?.tableView.reloadData()
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1.5 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), {
-                self?.tableView.jes_stopLoading()
+        tableView.refresh { 
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(2.5 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), {
+                self.tableView.jes_stopLoading()
             })
-        }, loadingView: loadingView, logoImage: "refresh_logo")
-        tableView.jes_setPullToRefreshFillColor(UIColor(red: 224/255.0, green: 231/255.0, blue: 235/255.0, alpha: 1.0))
-        tableView.jes_setPullToRefreshBackgroundColor(tableView.backgroundColor!)
+        }
         
     }
 

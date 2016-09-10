@@ -198,7 +198,6 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
         shapeLayer.frame = bounds
         shapeLayer.path = UIBezierPath(ovalInRect: shapeLayer.frame).CGPath
         
-        
         let inset = ringLayerT.lineWidth / 2.0
         ringLayerT.path = UIBezierPath(ovalInRect: CGRectInset(shapeLayer.bounds, inset, inset)).CGPath
         ringLayerO.path = UIBezierPath(ovalInRect: CGRectInset(shapeLayer.bounds, inset, inset)).CGPath

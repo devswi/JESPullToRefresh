@@ -34,7 +34,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="JkF-b1-FDH" customClass="JESPullToRefreshTableView" customModule="JESPullToRefresh" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </tableView>
                         </subviews>
@@ -42,8 +42,8 @@
                         <constraints>
                             <constraint firstItem="JkF-b1-FDH" firstAttribute="leading" secondItem="1pt-07-VUK" secondAttribute="leading" id="R25-Re-kLW"/>
                             <constraint firstItem="V3N-oX-EuZ" firstAttribute="top" secondItem="JkF-b1-FDH" secondAttribute="bottom" id="nAU-VG-A15"/>
+                            <constraint firstItem="JkF-b1-FDH" firstAttribute="top" secondItem="1pt-07-VUK" secondAttribute="top" id="oRN-cb-JqK"/>
                             <constraint firstAttribute="trailing" secondItem="JkF-b1-FDH" secondAttribute="trailing" id="qOD-1h-dgA"/>
-                            <constraint firstItem="JkF-b1-FDH" firstAttribute="top" secondItem="h4X-4k-Vwn" secondAttribute="bottom" id="zTx-tf-Qyu"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="z2h-ep-kVp"/>

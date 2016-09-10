@@ -21,10 +21,6 @@ protocol Refreshable {
     
 }
 
-protocol Preloadable {
-    
-}
-
 extension Refreshable where Self: UIScrollView {
     
     func refresh(withActionHandler actionHandler: RefreshHandler) {
@@ -34,6 +30,10 @@ extension Refreshable where Self: UIScrollView {
         self.jes_setPullToRefreshFillColor(UIColor(red: 224/255.0, green: 231/255.0, blue: 235/255.0, alpha: 1.0))
         self.jes_setPullToRefreshBackgroundColor(self.backgroundColor!)
     }
+    
+}
+
+class JESPullToRefreshTableView: UITableView, Refreshable {
     
 }
 
@@ -54,11 +54,11 @@ public extension UIViewController {
         }
     }
     
-    public func showLoading() {
+    public func showPreLoading(backgroundColor: UIColor = UIColor.whiteColor()) {
         if self.loadingBgView == nil {
             let loadingBgView = UIView(frame: self.view.bounds)
             self.loadingBgView = loadingBgView
-            loadingBgView.backgroundColor = UIColor.whiteColor()
+            loadingBgView.backgroundColor = backgroundColor
             self.view.addSubview(loadingBgView)
             
             let loadingView = JESRefreshView(frame: CGRect(x: 0, y: 0, width: Constants.loadingWidth, height: Constants.loadingHeight))
@@ -70,7 +70,7 @@ public extension UIViewController {
         }
     }
     
-    public func dismissLoading() {        
+    public func dismissPreLoading() {
         // Remove Animation and background view
         UIView.animateWithDuration(0.375, animations: {
             self.loadingBgView?.alpha = 0.0
@@ -79,8 +79,4 @@ public extension UIViewController {
             self.loadingBgView = nil
         }
     }
-}
-
-class JESPullToRefreshTableView: UITableView, Refreshable {
-
 }

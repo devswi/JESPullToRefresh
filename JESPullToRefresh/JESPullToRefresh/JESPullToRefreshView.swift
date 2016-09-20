@@ -10,47 +10,47 @@ import UIKit
 
 public
 enum JESPullToRefreshState {
-    case Stopped
-    case Dragging
-    case AnimatingBounce
-    case Loading
-    case AnimatingToStopped
+    case stopped
+    case dragging
+    case animatingBounce
+    case loading
+    case animatingToStopped
     
-    func isAnyOf(values: [JESPullToRefreshState]) -> Bool {
-        return values.contains({ $0 == self })
+    func isAnyOf(_ values: [JESPullToRefreshState]) -> Bool {
+        return values.contains(where: { $0 == self })
     }
 }
 
-public class JESPullToRefreshView: UIView {
+open class JESPullToRefreshView: UIView {
 
     // MARK: -
     // MARK: Vars
     
-    private var _state: JESPullToRefreshState = .Stopped
-    private(set) var state: JESPullToRefreshState {
+    fileprivate var _state: JESPullToRefreshState = .stopped
+    fileprivate(set) var state: JESPullToRefreshState {
         get { return _state }
         set {
             let previousValue = state
             _state = newValue
             
-            self.logoImageView.hidden = _state != .Dragging && _state != .AnimatingBounce
-            if previousValue == .Dragging && newValue == .AnimatingBounce {
+            self.logoImageView.isHidden = _state != .dragging && _state != .animatingBounce
+            if previousValue == .dragging && newValue == .animatingBounce {
                 loadingView?.startAnimating()
                 animateBounce()
-            } else if newValue == .Loading && actionHandler != nil {
+            } else if newValue == .loading && actionHandler != nil {
                 actionHandler()
-            } else if newValue == .AnimatingToStopped {
-                resetScrollViewContentInset(shouldAddObserverWhenFinished: true, animated: true, completion: { [weak self] () -> () in self?.state = .Stopped })
-            } else if newValue == .Stopped {
+            } else if newValue == .animatingToStopped {
+                resetScrollViewContentInset(shouldAddObserverWhenFinished: true, animated: true, completion: { [weak self] () -> () in self?.state = .stopped })
+            } else if newValue == .stopped {
                 loadingView?.stopLoading()
             }
         }
     }
     
-    private var originalContentInsetTop: CGFloat = 0.0 { didSet { layoutSubviews() } }
-    private let shapeLayer = CAShapeLayer()
+    fileprivate var originalContentInsetTop: CGFloat = 0.0 { didSet { layoutSubviews() } }
+    fileprivate let shapeLayer = CAShapeLayer()
     
-    private var displayLink: CADisplayLink!
+    fileprivate var displayLink: CADisplayLink!
     
     var actionHandler: (() -> Void)!
     
@@ -70,7 +70,7 @@ public class JESPullToRefreshView: UIView {
             logoImageView.removeFromSuperview()
             if let newValue = newValue {
                 logoImageView.image = UIImage(named: newValue)
-                logoImageView.contentMode = .Top
+                logoImageView.contentMode = .top
                 addSubview(logoImageView)
             }
         }
@@ -93,17 +93,17 @@ public class JESPullToRefreshView: UIView {
         }
     }
     
-    var fillColor: UIColor = .clearColor() { didSet { shapeLayer.fillColor = fillColor.CGColor } }
+    var fillColor: UIColor = UIColor.clear { didSet { shapeLayer.fillColor = fillColor.cgColor } }
     
     // MARK: Views
     
-    private let bounceAnimationHelperView = UIView()
+    fileprivate let bounceAnimationHelperView = UIView()
     
-    private let cControlPointView = UIView()
-    private let lControlPointView = UIView()
-    private let rControlPointView = UIView()
+    fileprivate let cControlPointView = UIView()
+    fileprivate let lControlPointView = UIView()
+    fileprivate let rControlPointView = UIView()
     
-    private let controlPointView = UIView()
+    fileprivate let controlPointView = UIView()
     
     // MARK: -
     // MARK: Constructors
@@ -112,11 +112,11 @@ public class JESPullToRefreshView: UIView {
         super.init(frame: .zero)
         
         displayLink = CADisplayLink(target: self, selector: #selector(JESPullToRefreshView.displayLinkTick))
-        displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
-        displayLink.paused = true
+        displayLink.add(to: RunLoop.main, forMode: RunLoopMode.commonModes)
+        displayLink.isPaused = true
         
-        shapeLayer.backgroundColor = UIColor.clearColor().CGColor
-        shapeLayer.fillColor = UIColor.blackColor().CGColor
+        shapeLayer.backgroundColor = UIColor.clear.cgColor
+        shapeLayer.fillColor = UIColor.black.cgColor
         shapeLayer.actions = ["path" : NSNull(), "position" : NSNull(), "bounds" : NSNull()]
         layer.addSublayer(shapeLayer)
         
@@ -124,7 +124,7 @@ public class JESPullToRefreshView: UIView {
         addSubview(lControlPointView)
         addSubview(rControlPointView)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(JESPullToRefreshView.applicationWillEnterForeground), name: UIApplicationWillEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(JESPullToRefreshView.applicationWillEnterForeground), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -139,30 +139,30 @@ public class JESPullToRefreshView: UIView {
     
     deinit {
         observing = false
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     // MARK: -
     // MARK: Observer
     
-    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override open func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == JESPullToRefreshConstants.KeyPath.ContentOffset {
-            if let newContentOffsetY = change?[NSKeyValueChangeNewKey]?.CGPointValue.y, let scrollView = scrollView() {
-                if state.isAnyOf([.Loading, .AnimatingToStopped]) && newContentOffsetY < -scrollView.contentInset.top {
+            if let newContentOffsetY = (change?[.newKey] as? NSValue)?.cgPointValue.y, let scrollView = scrollView() {
+                if state.isAnyOf([.loading, .animatingToStopped]) && newContentOffsetY < -scrollView.contentInset.top {
                     scrollView.contentOffset.y = -scrollView.contentInset.top
                 } else {
-                    scrollViewDidChangeContentOffset(dragging: scrollView.dragging)
+                    scrollViewDidChangeContentOffset(dragging: scrollView.isDragging)
                 }
                 layoutSubviews()
             }
         } else if keyPath == JESPullToRefreshConstants.KeyPath.ContentInset {
-            if let newContentInsetTop = change?[NSKeyValueChangeNewKey]?.UIEdgeInsetsValue().top {
+            if let newContentInsetTop = (change?[.newKey] as? NSValue)?.uiEdgeInsetsValue.top {
                 originalContentInsetTop = newContentInsetTop
             }
         } else if keyPath == JESPullToRefreshConstants.KeyPath.Frame {
             layoutSubviews()
         } else if keyPath == JESPullToRefreshConstants.KeyPath.PanGestureRecognizerState {
-            if let gestureState = scrollView()?.panGestureRecognizer.state where gestureState.jes_isAnyOf([.Ended, .Cancelled, .Failed]) {
+            if let gestureState = scrollView()?.panGestureRecognizer.state , gestureState.jes_isAnyOf([.ended, .cancelled, .failed]) {
                 scrollViewDidChangeContentOffset(dragging: false)
             }
         }
@@ -172,7 +172,7 @@ public class JESPullToRefreshView: UIView {
     // MARK: Notifications
     
     func applicationWillEnterForeground() {
-        if state == .Loading {
+        if state == .loading {
             layoutSubviews()
         }
     }
@@ -180,88 +180,88 @@ public class JESPullToRefreshView: UIView {
     // MARK: -
     // MARK: Methods (Public)
     
-    private func scrollView() -> UIScrollView? {
+    fileprivate func scrollView() -> UIScrollView? {
         return superview as? UIScrollView
     }
     
     func stopLoading() {
         // Prevent stop close animation
-        if state == .AnimatingToStopped { return }
-        state = .AnimatingToStopped
+        if state == .animatingToStopped { return }
+        state = .animatingToStopped
     }
     
     // MARK: Methods (Private)
     
-    private func isAnimating() -> Bool {
-        return state.isAnyOf([.AnimatingBounce, .AnimatingToStopped])
+    fileprivate func isAnimating() -> Bool {
+        return state.isAnyOf([.animatingBounce, .animatingToStopped])
     }
     
-    private func actualContentOffsetY() -> CGFloat {
+    fileprivate func actualContentOffsetY() -> CGFloat {
         guard let scrollView = scrollView() else { return 0.0 }
         return max(-scrollView.contentInset.top - scrollView.contentOffset.y, 0.0)
     }
     
-    private func currentHeight() -> CGFloat {
+    fileprivate func currentHeight() -> CGFloat {
         guard let scrollView = scrollView() else { return 0.0 }
         return max(-originalContentInsetTop - scrollView.contentOffset.y, 0)
     }
     
-    private func currentWaveHeight() -> CGFloat {
+    fileprivate func currentWaveHeight() -> CGFloat {
         return min(bounds.height / 3.0 * 1.6, JESPullToRefreshConstants.LoadingViewMaxHeight)
     }
     
-    private func currentPath() -> CGPath {
+    fileprivate func currentPath() -> CGPath {
         let width: CGFloat = scrollView()?.bounds.width ?? 0.0
         
         let bezierPath = UIBezierPath()
         let animating = isAnimating()
         
-        bezierPath.moveToPoint(CGPoint(x: 0.0, y: 0.0))
-        bezierPath.addLineToPoint(lControlPointView.jes_center(animating))
-        bezierPath.addLineToPoint(rControlPointView.jes_center(animating))
-        bezierPath.addLineToPoint(CGPoint(x: width, y: 0.0))
+        bezierPath.move(to: CGPoint(x: 0.0, y: 0.0))
+        bezierPath.addLine(to: lControlPointView.jes_center(animating))
+        bezierPath.addLine(to: rControlPointView.jes_center(animating))
+        bezierPath.addLine(to: CGPoint(x: width, y: 0.0))
         
-        bezierPath.closePath()
+        bezierPath.close()
         
-        return bezierPath.CGPath
+        return bezierPath.cgPath
     }
     
-    private func scrollViewDidChangeContentOffset(dragging dragging: Bool) {
+    fileprivate func scrollViewDidChangeContentOffset(dragging: Bool) {
         let offsetY = actualContentOffsetY()
         
-        if state == .Stopped && dragging {
-            state = .Dragging
+        if state == .stopped && dragging {
+            state = .dragging
             loadingView?.alpha = 1
-        } else if state == .Dragging && dragging == false {
+        } else if state == .dragging && dragging == false {
             if offsetY >= JESPullToRefreshConstants.MinOffsetToPull {
-                state = .AnimatingBounce
+                state = .animatingBounce
             } else {
-                state = .Stopped
+                state = .stopped
             }
-        } else if state.isAnyOf([.Dragging, .Stopped]) {
+        } else if state.isAnyOf([.dragging, .stopped]) {
             var pullProgress: CGFloat = offsetY <= JESPullToRefreshConstants.LoadingViewMinOffsetY ? 0.0 : min(abs(offsetY - JESPullToRefreshConstants.LoadingViewMinOffsetY) / (JESPullToRefreshConstants.MinOffsetToPull), 1.0)
-            if state == .Stopped { pullProgress = 0.0 }
+            if state == .stopped { pullProgress = 0.0 }
             let height = bounds.height
             if height > 2 * JESPullToRefreshConstants.LoadingViewTopSpacing { loadingView?.setPullProgress(pullProgress) }
         }
     }
     
-    private func resetScrollViewContentInset(shouldAddObserverWhenFinished shouldAddObserverWhenFinished: Bool, animated: Bool, completion: (() -> ())?) {
+    fileprivate func resetScrollViewContentInset(shouldAddObserverWhenFinished: Bool, animated: Bool, completion: (() -> ())?) {
         guard let scrollView = scrollView() else { return }
         
         var contentInset = scrollView.contentInset
         contentInset.top = originalContentInsetTop
         
-        if state == .AnimatingBounce {
+        if state == .animatingBounce {
             contentInset.top += currentHeight()
-        } else if state == .Loading {
+        } else if state == .loading {
             contentInset.top += JESPullToRefreshConstants.LoadingContentInset
         }
         
         scrollView.jes_removeObserver(self, forKeyPath: JESPullToRefreshConstants.KeyPath.ContentInset)
         
         let animationBlock = {
-            if self.state == .AnimatingToStopped { self.loadingView?.alpha = 0 }
+            if self.state == .animatingToStopped { self.loadingView?.alpha = 0 }
             scrollView.contentInset = contentInset
         }
         let completionBlock = { () -> Void in
@@ -273,7 +273,7 @@ public class JESPullToRefreshView: UIView {
         
         if animated {
             startDisplayLink()
-            UIView.animateWithDuration(0.2, animations: animationBlock, completion: { _ in
+            UIView.animate(withDuration: 0.2, animations: animationBlock, completion: { _ in
                 self.stopDisplayLink()
                 completionBlock()
             })
@@ -283,7 +283,7 @@ public class JESPullToRefreshView: UIView {
         }
     }
     
-    private func animateBounce() {
+    fileprivate func animateBounce() {
         guard let scrollView = scrollView() else { return }
         if (!self.observing) { return }
         
@@ -292,26 +292,26 @@ public class JESPullToRefreshView: UIView {
         let centerY = JESPullToRefreshConstants.LoadingContentInset
         let duration = 0.2
         
-        scrollView.scrollEnabled = false
+        scrollView.isScrollEnabled = false
         startDisplayLink()
         scrollView.jes_removeObserver(self, forKeyPath: JESPullToRefreshConstants.KeyPath.ContentOffset)
         scrollView.jes_removeObserver(self, forKeyPath: JESPullToRefreshConstants.KeyPath.ContentInset)
         
-        UIView.animateWithDuration(duration, animations: { [weak self] in
+        UIView.animate(withDuration: duration, animations: { [weak self] in
             self?.lControlPointView.center.y = centerY
             self?.rControlPointView.center.y = centerY
-        }) { [weak self] _ in
+        }, completion: { [weak self] _ in
             self?.stopDisplayLink()
             self?.resetScrollViewContentInset(shouldAddObserverWhenFinished: true, animated: false, completion: nil)
-            if let strongSelf = self, scrollView = strongSelf.scrollView() {
+            if let strongSelf = self, let scrollView = strongSelf.scrollView() {
                 scrollView.jes_addObserver(strongSelf, forKeyPath: JESPullToRefreshConstants.KeyPath.ContentOffset)
-                scrollView.scrollEnabled = true
+                scrollView.isScrollEnabled = true
             }
-            self?.state = .Loading
-        }
+            self?.state = .loading
+        }) 
         
         bounceAnimationHelperView.center = CGPoint(x: 0.0, y: originalContentInsetTop + currentHeight())
-        UIView.animateWithDuration(duration, animations: { [weak self] in
+        UIView.animate(withDuration: duration, animations: { [weak self] in
             if let contentInsetTop = self?.originalContentInsetTop {
                 self?.bounceAnimationHelperView.center = CGPoint(x: 0.0, y: contentInsetTop + JESPullToRefreshConstants.LoadingContentInset)
             }
@@ -321,26 +321,26 @@ public class JESPullToRefreshView: UIView {
     // MARK: -
     // MARK: CADisplayLink
     
-    private func startDisplayLink() {
-        displayLink.paused = false
+    fileprivate func startDisplayLink() {
+        displayLink.isPaused = false
     }
     
-    private func stopDisplayLink() {
-        displayLink.paused = true
+    fileprivate func stopDisplayLink() {
+        displayLink.isPaused = true
     }
     
     func displayLinkTick() {
         let width = bounds.width
         var height: CGFloat = 0.0
         
-        if state == .AnimatingBounce {
+        if state == .animatingBounce {
             guard let scrollView = scrollView() else { return }
             
             scrollView.contentInset.top = bounceAnimationHelperView.jes_center(isAnimating()).y
             scrollView.contentOffset.y = -scrollView.contentInset.top
             
             height = scrollView.contentInset.top - originalContentInsetTop
-        } else if state == .AnimatingToStopped {
+        } else if state == .animatingToStopped {
             guard let scrollView = scrollView() else { return }
             height = -scrollView.contentOffset.y
         }
@@ -355,7 +355,7 @@ public class JESPullToRefreshView: UIView {
     // MARK: -
     // MARK: Layout
     
-    private func layoutLoadingView() {
+    fileprivate func layoutLoadingView() {
         
         let width = bounds.width
         let height: CGFloat = bounds.height
@@ -369,25 +369,25 @@ public class JESPullToRefreshView: UIView {
         let loadingViewSize: CGFloat = min(max(height - 2 * originY, 0.0), maxLoadingViewSize)
         
         loadingView?.frame = CGRect(x: (width - loadingViewSize) / 2.0, y: originY, width: loadingViewSize, height: loadingViewSize)
-        loadingView?.maskLayer.frame = convertRect(shapeLayer.frame, toView: loadingView)
+        loadingView?.maskLayer.frame = convert(shapeLayer.frame, to: loadingView)
         loadingView?.maskLayer.path = shapeLayer.path
         
         logoImageView.frame = CGRect(x: 0, y: originY + maxLoadingViewSize + 20, width: width, height: 108)
-        logoImageView.maskLayer.frame = convertRect(shapeLayer.frame, toView: logoImageView)
+        logoImageView.maskLayer.frame = convert(shapeLayer.frame, to: logoImageView)
         logoImageView.maskLayer.path = shapeLayer.path
     }
     
-    override public func layoutSubviews() {
+    override open func layoutSubviews() {
         super.layoutSubviews()
         
-        if let scrollView = scrollView() where state != .AnimatingBounce {
+        if let scrollView = scrollView() , state != .animatingBounce {
             let width = scrollView.bounds.width
             let height = currentHeight()
             
             frame = CGRect(x: 0.0, y: -height, width: width, height: height)
             
             // Loading || Stopped
-            if state.isAnyOf([.Loading, .AnimatingToStopped]) {
+            if state.isAnyOf([.loading, .animatingToStopped]) {
                 lControlPointView.center = CGPoint(x: 0, y: height)
                 rControlPointView.center = CGPoint(x: width, y: height)
             } else {

@@ -10,14 +10,14 @@ import UIKit
 
 class JESRefreshView: UIView {
     
-    private var loadingViewO: JESRefreshIcon?
-    private var loadingViewR: JESRefreshIcon?
-    private var loadingViewT: JESRefreshIcon?
-    private var loadingViewX: JESRefreshIcon?
+    fileprivate var loadingViewO: JESRefreshIcon?
+    fileprivate var loadingViewR: JESRefreshIcon?
+    fileprivate var loadingViewT: JESRefreshIcon?
+    fileprivate var loadingViewX: JESRefreshIcon?
     
-    private var loadingViews: [JESRefreshIcon] = []
+    fileprivate var loadingViews: [JESRefreshIcon] = []
     
-    private struct Constants {
+    fileprivate struct Constants {
         static let iconSize: CGFloat = 32
     }
     
@@ -43,7 +43,7 @@ class JESRefreshView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.backgroundColor = UIColor.clearColor()
+        self.backgroundColor = UIColor.clear
         
         if self.loadingViewO == nil {
             self.loadingViewO = JESRefreshIcon(withMarkedImageName: "jes_loading_o", initialState: .up(beginTime: 0))
@@ -73,9 +73,9 @@ class JESRefreshView: UIView {
         // MARK: 
     }
     
-    private func layoutFrames() {
+    fileprivate func layoutFrames() {
         self.loadingViews.forEach { icon in
-            let index: Int = self.loadingViews.indexOf(icon) ?? 0
+            let index: Int = self.loadingViews.index(of: icon) ?? 0
             let x = CGFloat(index) * (icon.bounds.width + 5)
             var frame = icon.frame
             frame.origin.x = x
@@ -84,9 +84,9 @@ class JESRefreshView: UIView {
     }
     
     func animate() {
-        UIView.animateWithDuration(0.35) {
+        UIView.animate(withDuration: 0.35, animations: {
             self.alpha = 1.0
-        }
+        }) 
     }
     
 }

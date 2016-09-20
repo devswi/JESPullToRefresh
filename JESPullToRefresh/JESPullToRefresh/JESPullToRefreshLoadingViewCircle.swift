@@ -25,16 +25,16 @@ public extension CGFloat {
 
 private class JESPullToRefreshLoadingInsideViewCircle: UIView {
     
-    private let shapeLayer = CAShapeLayer()
+    fileprivate let shapeLayer = CAShapeLayer()
     
-    private init(fillColor: UIColor) {
+    fileprivate init(fillColor: UIColor) {
         super.init(frame: .zero)
         
-        self.backgroundColor = UIColor.clearColor()
+        self.backgroundColor = UIColor.clear
         
         shapeLayer.lineWidth = 0.01
-        shapeLayer.strokeColor = UIColor.clearColor().CGColor
-        shapeLayer.fillColor = fillColor.CGColor
+        shapeLayer.strokeColor = UIColor.clear.cgColor
+        shapeLayer.fillColor = fillColor.cgColor
         shapeLayer.actions = ["strokeEnd": NSNull(), "transform": NSNull()]
         layer.addSublayer(shapeLayer)
     }
@@ -46,33 +46,33 @@ private class JESPullToRefreshLoadingInsideViewCircle: UIView {
     // MARK: -
     // MARK: Layout
     
-    override private func layoutSubviews() {
+    override fileprivate func layoutSubviews() {
         super.layoutSubviews()
         
         shapeLayer.frame = bounds
-        shapeLayer.path = UIBezierPath(ovalInRect: shapeLayer.frame).CGPath
+        shapeLayer.path = UIBezierPath(ovalIn: shapeLayer.frame).cgPath
     }
 }
 
 // MARK: -
 // MARK: JESPullToRefreshLoadingViewCircle
 
-public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
+open class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
     
     // MARK: -
     // MARK: Vars
     
-    private let kRotationAnimation = "kRotationAnimation"
+    fileprivate let kRotationAnimation = "kRotationAnimation"
     
-    private let shapeLayer = CAShapeLayer()
-    private var insideView: JESPullToRefreshLoadingInsideViewCircle?
+    fileprivate let shapeLayer = CAShapeLayer()
+    fileprivate var insideView: JESPullToRefreshLoadingInsideViewCircle?
     
     // MARK: -
     // MARK: Rings
-    private let ringLayerT = CAShapeLayer()
-    private let ringLayerR = CAShapeLayer()
-    private let ringLayerX = CAShapeLayer()
-    private let ringLayerO = CAShapeLayer()
+    fileprivate let ringLayerT = CAShapeLayer()
+    fileprivate let ringLayerR = CAShapeLayer()
+    fileprivate let ringLayerX = CAShapeLayer()
+    fileprivate let ringLayerO = CAShapeLayer()
     
     // MARK: -
     // MARK: Constructors
@@ -81,8 +81,8 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
         super.init(frame: .zero)
         
         shapeLayer.lineWidth = 0.01
-        shapeLayer.strokeColor = UIColor.clearColor().CGColor
-        shapeLayer.fillColor = JESPullToRefreshConstants.LoadingViewBackgroundColor.CGColor
+        shapeLayer.strokeColor = UIColor.clear.cgColor
+        shapeLayer.fillColor = JESPullToRefreshConstants.LoadingViewBackgroundColor.cgColor
         shapeLayer.actions = ["strokeEnd": NSNull(), "transform": NSNull()]
         layer.addSublayer(shapeLayer)
         
@@ -97,7 +97,7 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
     // MARK: -
     // MARK: Methods
     
-    override public func setPullProgress(progress: CGFloat) {
+    override open func setPullProgress(_ progress: CGFloat) {
         super.setPullProgress(progress)
         
         if progress < 1.0 {
@@ -114,11 +114,11 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
         if progress == 1.0 { startAnimating() }
     }
     
-    override public func startAnimating() {
+    override open func startAnimating() {
         super.startAnimating()
         
         // 如果正在执行动画 return
-        if shapeLayer.animationForKey(kRotationAnimation) != nil { return }
+        if shapeLayer.animation(forKey: kRotationAnimation) != nil { return }
         
         // 四色曲线
         // 6CE4E8
@@ -126,83 +126,83 @@ public class JESPullToRefreshLoadingViewCircle: JESPullToRefreshLoadingView {
         // 7DA8F9
         // FA6979
         ringLayerT.lineWidth = 3.0
-        ringLayerT.strokeColor = UIColor(hex: 0x6CE4E8).CGColor
-        ringLayerT.fillColor = UIColor.clearColor().CGColor
+        ringLayerT.strokeColor = UIColor(hex: 0x6CE4E8).cgColor
+        ringLayerT.fillColor = UIColor.clear.cgColor
         shapeLayer.addSublayer(ringLayerT)
         
         ringLayerT.strokeStart = 0
         ringLayerT.strokeEnd = 0.25
         
         ringLayerR.lineWidth = 3.0
-        ringLayerR.strokeColor = UIColor(hex: 0xE5A8E1).CGColor
-        ringLayerR.fillColor = UIColor.clearColor().CGColor
+        ringLayerR.strokeColor = UIColor(hex: 0xE5A8E1).cgColor
+        ringLayerR.fillColor = UIColor.clear.cgColor
         shapeLayer.addSublayer(ringLayerR)
         
         ringLayerR.strokeStart = 0.25
         ringLayerR.strokeEnd = 0.5
         
         ringLayerX.lineWidth = 3.0
-        ringLayerX.strokeColor = UIColor(hex: 0x7DA8F9).CGColor
-        ringLayerX.fillColor = UIColor.clearColor().CGColor
+        ringLayerX.strokeColor = UIColor(hex: 0x7DA8F9).cgColor
+        ringLayerX.fillColor = UIColor.clear.cgColor
         shapeLayer.addSublayer(ringLayerX)
         
         ringLayerX.strokeStart = 0.5
         ringLayerX.strokeEnd = 0.75
         
         ringLayerO.lineWidth = 3.0
-        ringLayerO.strokeColor = UIColor(hex: 0xFA6979).CGColor
-        ringLayerO.fillColor = UIColor.clearColor().CGColor
+        ringLayerO.strokeColor = UIColor(hex: 0xFA6979).cgColor
+        ringLayerO.fillColor = UIColor.clear.cgColor
         shapeLayer.addSublayer(ringLayerO)
         
         ringLayerO.strokeStart = 0.75
         ringLayerO.strokeEnd = 1.0
         
-        shapeLayer.fillColor = UIColor.clearColor().CGColor
+        shapeLayer.fillColor = UIColor.clear.cgColor
         
         let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation.z")
         rotationAnimation.toValue = CGFloat(2 * M_PI) + currentDegree()
         rotationAnimation.duration = 1.0
         rotationAnimation.repeatCount = Float.infinity
-        rotationAnimation.removedOnCompletion = false
+        rotationAnimation.isRemovedOnCompletion = false
         rotationAnimation.fillMode = kCAFillModeForwards
-        shapeLayer.addAnimation(rotationAnimation, forKey: kRotationAnimation)
+        shapeLayer.add(rotationAnimation, forKey: kRotationAnimation)
     }
     
-    override public func stopLoading() {
+    override open func stopLoading() {
         super.stopLoading()
         
-        shapeLayer.removeAnimationForKey(kRotationAnimation)
+        shapeLayer.removeAnimation(forKey: kRotationAnimation)
         ringLayerO.removeFromSuperlayer()
         ringLayerX.removeFromSuperlayer()
         ringLayerR.removeFromSuperlayer()
         ringLayerT.removeFromSuperlayer()
         
-        shapeLayer.fillColor = JESPullToRefreshConstants.LoadingViewBackgroundColor.CGColor
+        shapeLayer.fillColor = JESPullToRefreshConstants.LoadingViewBackgroundColor.cgColor
     }
     
-    private func currentDegree() -> CGFloat {
-        return shapeLayer.valueForKeyPath("transform.rotation.z") as! CGFloat
+    fileprivate func currentDegree() -> CGFloat {
+        return shapeLayer.value(forKeyPath: "transform.rotation.z") as! CGFloat
     }
     
-    override public func tintColorDidChange() {
+    override open func tintColorDidChange() {
         super.tintColorDidChange()
         
-        shapeLayer.strokeColor = JESPullToRefreshConstants.LoadingViewBackgroundColor.CGColor
+        shapeLayer.strokeColor = JESPullToRefreshConstants.LoadingViewBackgroundColor.cgColor
     }
     
     // MARK: -
     // MARK: Layout
     
-    override public func layoutSubviews() {
+    override open func layoutSubviews() {
         super.layoutSubviews()
         shapeLayer.frame = bounds
-        shapeLayer.path = UIBezierPath(ovalInRect: shapeLayer.frame).CGPath
+        shapeLayer.path = UIBezierPath(ovalIn: shapeLayer.frame).cgPath
         
         let inset = ringLayerT.lineWidth / 2.0
-        ringLayerT.path = UIBezierPath(ovalInRect: CGRectInset(shapeLayer.bounds, inset, inset)).CGPath
-        ringLayerO.path = UIBezierPath(ovalInRect: CGRectInset(shapeLayer.bounds, inset, inset)).CGPath
-        ringLayerX.path = UIBezierPath(ovalInRect: CGRectInset(shapeLayer.bounds, inset, inset)).CGPath
-        ringLayerR.path = UIBezierPath(ovalInRect: CGRectInset(shapeLayer.bounds, inset, inset)).CGPath
+        ringLayerT.path = UIBezierPath(ovalIn: shapeLayer.bounds.insetBy(dx: inset, dy: inset)).cgPath
+        ringLayerO.path = UIBezierPath(ovalIn: shapeLayer.bounds.insetBy(dx: inset, dy: inset)).cgPath
+        ringLayerX.path = UIBezierPath(ovalIn: shapeLayer.bounds.insetBy(dx: inset, dy: inset)).cgPath
+        ringLayerR.path = UIBezierPath(ovalIn: shapeLayer.bounds.insetBy(dx: inset, dy: inset)).cgPath
     }
     
 }

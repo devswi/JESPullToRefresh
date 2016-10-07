@@ -9,6 +9,19 @@
 import UIKit
 import ObjectiveC
 
+public struct Refresh<Base: Any> {
+    public let base: Base
+    public init(_ base: Base) {
+        self.base = base
+    }
+}
+
+public extension NSObjectProtocol {
+    public var refresh: Refresh<Self> {
+        return Refresh(self)
+    }
+}
+
 // MARK: -
 // MARK: (NSObject) Extension
 
@@ -57,6 +70,17 @@ public extension NSObject {
 // MARK: -
 // MARK: (UIScrollView) Extension
 
+extension Refresh where Base: UIScrollView {
+    
+    // MARK: - Vars
+    
+    // MARK: - Methods (public)
+    
+    public func actionHandler(_ actionHandler: @escaping () -> Void, loadingView: JESPullToRefreshLoadingView?, logoImage: String? = nil) {
+        base.jes_addPullToRefreshWithActionHandler(actionHandler, loadingView: loadingView, logoImage: logoImage)
+    }
+}
+
 public extension UIScrollView {
     
     // MARK: - Vars
@@ -75,7 +99,7 @@ public extension UIScrollView {
         }
     }
     
-    // MARK: - Methods (Public)
+    // MARK: - Methods (private)
     
     public func jes_addPullToRefreshWithActionHandler(_ actionHandler: @escaping () -> Void, loadingView: JESPullToRefreshLoadingView?, logoImage: String? = nil) {
         isMultipleTouchEnabled = false

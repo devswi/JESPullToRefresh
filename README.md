@@ -135,7 +135,7 @@
 
 # 🎉 更加 Swift 的使用
 
-国庆节前看到了 [靛青K的一篇文章很有意思](http://blog.dianqk.org/2016/08/10/better-swifty-framework-namespace/)，于是回到RxSwift 项目下查看了这个 [issue826](https://github.com/ReactiveX/RxSwift/issues/826) 很有意思，issue 内容不在此赘述。这也解决了我在之前适配 Swift 3 的时候，对诸如 `Kingfisher`/`SnapKit`/`RxSwift`，统统将 `xxx_xxxx` 这样的代码形式修改成了 `xxx.xxxx` 的疑惑。
+国庆节前看到了 [靛青K的一篇文章](http://blog.dianqk.org/2016/08/10/better-swifty-framework-namespace/)，于是回到RxSwift 项目下查看了这个 [issue826](https://github.com/ReactiveX/RxSwift/issues/826) 很有意思，issue 内容不在此赘述。这也解决了我在之前适配 Swift 3 的时候，对诸如 `Kingfisher`/`SnapKit`/`RxSwift`，统统将 `xxx_xxxx` 这样的代码形式修改成了 `xxx.xxxx` 的疑惑。
 
 之前的一篇博客 [从一个预加载动画想起](http://shiweicn.github.io/2016/09/08/thinking-after-animation/) 写了使用面向协议编程实现视图。在文章中，使用了面向协议的方式，将刷新和预加载动画进行了封装。不过这样的做法，需要设置需要实现刷新的 tableView 统统继承自设定好的父类。能不能按照前文中的方式进行更好的修改呢？
 

@@ -70,15 +70,26 @@ public extension NSObject {
 // MARK: -
 // MARK: (UIScrollView) Extension
 
-extension Refresh where Base: UIScrollView {
-    
-    // MARK: - Vars
+public extension Refresh where Base: UIScrollView {
     
     // MARK: - Methods (public)
     
-    public func actionHandler(_ actionHandler: @escaping () -> Void, loadingView: JESPullToRefreshLoadingView?, logoImage: String? = nil) {
-        base.jes_addPullToRefreshWithActionHandler(actionHandler, loadingView: loadingView, logoImage: logoImage)
+    public func handler(_ handler: @escaping () -> Void) {
+        let loadingView = JESPullToRefreshLoadingViewCircle(fillColor: UIColor(red: 224/255.0, green: 231/255.0, blue: 235/255.0, alpha: 1.0))
+        loadingView.tintColor = UIColor.white
+        base.jes_addPullToRefreshWithActionHandler(handler, loadingView: loadingView, logoImage: "refresh_logo")
+        base.jes_setPullToRefreshFillColor(UIColor(red: 224/255.0, green: 231/255.0, blue: 235/255.0, alpha: 1.0))
+        base.jes_setPullToRefreshBackgroundColor(base.backgroundColor!)
     }
+    
+    public func remove() {
+        base.jes_removePullToRefresh()
+    }
+    
+    public func stop() {
+        base.jes_stopLoading()
+    }
+    
 }
 
 public extension UIScrollView {
@@ -117,28 +128,23 @@ public extension UIScrollView {
         pullToRefreshView.observing = true
     }
     
-    /**
-     Add this method in your deinit() method to remove all the KVO
-     
-     - author: Shi Wei
-     - date: 16-08-30 23:08:28
-     */
-    public func jes_removePullToRefresh() {
+    fileprivate func jes_removePullToRefresh() {
         pullToRefreshView?.disassociateDisplayLink()
         pullToRefreshView?.observing = false
         pullToRefreshView?.removeFromSuperview()
     }
     
+    fileprivate func jes_stopLoading() {
+        pullToRefreshView?.stopLoading()
+    }
+    
+    // MARK: - Method (public)
     public func jes_setPullToRefreshBackgroundColor(_ color: UIColor) {
         pullToRefreshView?.backgroundColor = color
     }
     
     public func jes_setPullToRefreshFillColor(_ color: UIColor) {
         pullToRefreshView?.fillColor = color
-    }
-    
-    public func jes_stopLoading() {
-        pullToRefreshView?.stopLoading()
     }
 }
 

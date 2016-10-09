@@ -1,40 +1,34 @@
 //
-//  JESPullToRefreshTableView.swift
+//  JESPreloadingExtensions.swift
 //  JESPullToRefresh
 //
-//  Created by Jerry on 9/8/16.
+//  Created by Jerry on 09/10/2016.
 //  Copyright © 2016 jerryshi. All rights reserved.
 //
 
 import UIKit
-import ObjectiveC
 
-/**
- *  @author Shi Wei, 16-08-29 10:08:32
- *
- *  table view refresh protocol
- */
-
-typealias RefreshHandler = () -> Void
-
-protocol Refreshable {
-    
+public struct Preloading<Base: Any> {
+    public let base: Base
+    public init(_ base: Base) {
+        self.base = base
+    }
 }
 
-extension Refreshable where Self: UIScrollView {
-    
-    func refresh(withActionHandler actionHandler: @escaping RefreshHandler) {
-        let loadingView = JESPullToRefreshLoadingViewCircle(fillColor: UIColor(red: 224/255.0, green: 231/255.0, blue: 235/255.0, alpha: 1.0))
-        loadingView.tintColor = UIColor.white
-        self.jes_addPullToRefreshWithActionHandler(actionHandler, loadingView: loadingView, logoImage: "refresh_logo")
-        self.jes_setPullToRefreshFillColor(UIColor(red: 224/255.0, green: 231/255.0, blue: 235/255.0, alpha: 1.0))
-        self.jes_setPullToRefreshBackgroundColor(self.backgroundColor!)
+public extension NSObjectProtocol {
+    public var preloading: Preloading<Self> {
+        return Preloading(self)
+    }
+}
+
+public extension Preloading where Base: UIViewController {
+    public func show(withBackgroundColor color: UIColor = UIColor.white) {
+        base.showPreLoading(color)
     }
     
-}
-
-class JESPullToRefreshTableView: UITableView, Refreshable {
-    
+    public func dismiss() {
+        base.dismissPreLoading()
+    }
 }
 
 public extension UIViewController {
@@ -54,7 +48,7 @@ public extension UIViewController {
         }
     }
     
-    public func showPreLoading(_ backgroundColor: UIColor = UIColor.white) {
+    fileprivate func showPreLoading(_ backgroundColor: UIColor) {
         if self.loadingBgView == nil {
             let loadingBgView = UIView(frame: self.view.bounds)
             self.loadingBgView = loadingBgView
@@ -70,13 +64,13 @@ public extension UIViewController {
         }
     }
     
-    public func dismissPreLoading() {
+    fileprivate func dismissPreLoading() {
         // Remove Animation and background view
         UIView.animate(withDuration: 0.375, animations: {
             self.loadingBgView?.alpha = 0.0
-        }, completion: { _ in
-            self.loadingBgView?.removeFromSuperview()
-            self.loadingBgView = nil
-        }) 
+            }, completion: { _ in
+                self.loadingBgView?.removeFromSuperview()
+                self.loadingBgView = nil
+        })
     }
 }

@@ -10,31 +10,30 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    @IBOutlet weak var tableView: JESPullToRefreshTableView!
+    @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.showPreLoading()
+        self.preloading.show()
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(2.5 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
-            self.dismissPreLoading()
+            self.preloading.dismiss()
         })
         
         tableView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         tableView.separatorColor = UIColor(red: 230/255.0, green: 230/255.0, blue: 231/255.0, alpha: 1.0)
         tableView.backgroundColor = UIColor(red: 250/255.0, green: 250/255.0, blue: 251/255.0, alpha: 1.0)
         
-        tableView.refresh { 
+        tableView.refresh.handler { 
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(2.5 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
-                self.tableView.jes_stopLoading()
+                self.tableView.refresh.stop()
             })
         }
-        
     }
 
     deinit {
-        tableView.jes_removePullToRefresh()
+        tableView.refresh.remove()
     }
     
     override func didReceiveMemoryWarning() {

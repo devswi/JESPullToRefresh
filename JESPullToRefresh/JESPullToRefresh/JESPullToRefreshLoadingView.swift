@@ -8,15 +8,15 @@
 
 import UIKit
 
-public class JESPullToRefreshLogoImageView: UIImageView {
+open class JESPullToRefreshLogoImageView: UIImageView {
     
     // MARK: -
     // MARK: Vars
     
     lazy var maskLayer: CAShapeLayer = {
         let maskLayer = CAShapeLayer()
-        maskLayer.backgroundColor = UIColor.clearColor().CGColor
-        maskLayer.fillColor = UIColor.blackColor().CGColor
+        maskLayer.backgroundColor = UIColor.clear.cgColor
+        maskLayer.fillColor = UIColor.black.cgColor
         maskLayer.actions = ["path": NSNull(), "position": NSNull(), "bounds": NSNull()]
         self.layer.mask = maskLayer
         return maskLayer
@@ -38,15 +38,15 @@ public class JESPullToRefreshLogoImageView: UIImageView {
     }
 }
 
-public class JESPullToRefreshLoadingView: UIView {
+open class JESPullToRefreshLoadingView: UIView {
     
     // MARK: -
     // MARK: Vars
     
     lazy var maskLayer: CAShapeLayer = {
         let maskLayer = CAShapeLayer()
-        maskLayer.backgroundColor = UIColor.clearColor().CGColor
-        maskLayer.fillColor = UIColor.blackColor().CGColor
+        maskLayer.backgroundColor = UIColor.clear.cgColor
+        maskLayer.fillColor = UIColor.black.cgColor
         maskLayer.actions = ["path" : NSNull(), "position" : NSNull(), "bounds" : NSNull()]
         self.layer.mask = maskLayer
         return maskLayer
@@ -70,15 +70,15 @@ public class JESPullToRefreshLoadingView: UIView {
     // MARK: -
     // MARK: Methods
     
-    public func setPullProgress(progress: CGFloat) {
+    open func setPullProgress(_ progress: CGFloat) {
         
     }
     
-    public func startAnimating() {
+    open func startAnimating() {
         
     }
     
-    public func stopLoading() {
+    open func stopLoading() {
         
     }
 }

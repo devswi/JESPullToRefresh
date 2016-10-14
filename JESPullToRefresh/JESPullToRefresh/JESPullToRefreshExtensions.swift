@@ -9,6 +9,19 @@
 import UIKit
 import ObjectiveC
 
+public struct Refresh<Base: Any> {
+    public let base: Base
+    public init(_ base: Base) {
+        self.base = base
+    }
+}
+
+public extension NSObjectProtocol {
+    public var refresh: Refresh<Self> {
+        return Refresh(self)
+    }
+}
+
 // MARK: -
 // MARK: (NSObject) Extension
 
@@ -18,7 +31,7 @@ public extension NSObject {
         static var observersArray = "observers"
     }
     
-    private var jes_observers: [[String: NSObject]] {
+    fileprivate var jes_observers: [[String: NSObject]] {
         get {
             if let observers = objc_getAssociatedObject(self, &jes_associatedKeys.observersArray) as? [[String : NSObject]] {
                 return observers
@@ -35,20 +48,20 @@ public extension NSObject {
     
     // Method
     
-    public func jes_addObserver(observer: NSObject, forKeyPath keyPath: String) {
+    public func jes_addObserver(_ observer: NSObject, forKeyPath keyPath: String) {
         let observerInfo = [keyPath: observer]
         
-        if jes_observers.indexOf({ $0 == observerInfo }) == nil {
+        if jes_observers.index(where: { $0 == observerInfo }) == nil {
             jes_observers.append(observerInfo)
-            addObserver(observer, forKeyPath: keyPath, options: .New, context: nil)
+            addObserver(observer, forKeyPath: keyPath, options: .new, context: nil)
         }
     }
     
-    public func jes_removeObserver(observer: NSObject, forKeyPath keyPath: String) {
+    public func jes_removeObserver(_ observer: NSObject, forKeyPath keyPath: String) {
         let observerInfo = [keyPath: observer]
         
-        if let index = jes_observers.indexOf({ $0 == observerInfo}) {
-            jes_observers.removeAtIndex(index)
+        if let index = jes_observers.index(where: { $0 == observerInfo}) {
+            jes_observers.remove(at: index)
             removeObserver(observer, forKeyPath: keyPath)
         }
     }
@@ -57,16 +70,38 @@ public extension NSObject {
 // MARK: -
 // MARK: (UIScrollView) Extension
 
+public extension Refresh where Base: UIScrollView {
+    
+    // MARK: - Methods (public)
+    
+    public func handler(_ handler: @escaping () -> Void) {
+        let loadingView = JESPullToRefreshLoadingViewCircle(fillColor: UIColor(red: 224/255.0, green: 231/255.0, blue: 235/255.0, alpha: 1.0))
+        loadingView.tintColor = UIColor.white
+        base.jes_addPullToRefreshWithActionHandler(handler, loadingView: loadingView, logoImage: "refresh_logo")
+        base.jes_setPullToRefreshFillColor(UIColor(red: 224/255.0, green: 231/255.0, blue: 235/255.0, alpha: 1.0))
+        base.jes_setPullToRefreshBackgroundColor(base.backgroundColor!)
+    }
+    
+    public func remove() {
+        base.jes_removePullToRefresh()
+    }
+    
+    public func stop() {
+        base.jes_stopLoading()
+    }
+    
+}
+
 public extension UIScrollView {
     
     // MARK: - Vars
     
-    private struct jes_associatedKeys {
+    fileprivate struct jes_associatedKeys {
         static var pullToRefreshView = "pullToRefreshView"
         static var slidForMoreView = "slidForMoreView"
     }
     
-    private var pullToRefreshView: JESPullToRefreshView? {
+    fileprivate var pullToRefreshView: JESPullToRefreshView? {
         get {
             return objc_getAssociatedObject(self, &jes_associatedKeys.pullToRefreshView) as? JESPullToRefreshView
         }
@@ -75,10 +110,10 @@ public extension UIScrollView {
         }
     }
     
-    // MARK: - Methods (Public)
+    // MARK: - Methods (private)
     
-    public func jes_addPullToRefreshWithActionHandler(actionHandler: () -> Void, loadingView: JESPullToRefreshLoadingView?, logoImage: String? = nil) {
-        multipleTouchEnabled = false
+    public func jes_addPullToRefreshWithActionHandler(_ actionHandler: @escaping () -> Void, loadingView: JESPullToRefreshLoadingView?, logoImage: String? = nil) {
+        isMultipleTouchEnabled = false
         panGestureRecognizer.maximumNumberOfTouches = 1
         
         let pullToRefreshView = JESPullToRefreshView()
@@ -93,28 +128,23 @@ public extension UIScrollView {
         pullToRefreshView.observing = true
     }
     
-    /**
-     Add this method in your deinit() method to remove all the KVO
-     
-     - author: Shi Wei
-     - date: 16-08-30 23:08:28
-     */
-    public func jes_removePullToRefresh() {
+    fileprivate func jes_removePullToRefresh() {
         pullToRefreshView?.disassociateDisplayLink()
         pullToRefreshView?.observing = false
         pullToRefreshView?.removeFromSuperview()
     }
     
-    public func jes_setPullToRefreshBackgroundColor(color: UIColor) {
+    fileprivate func jes_stopLoading() {
+        pullToRefreshView?.stopLoading()
+    }
+    
+    // MARK: - Method (public)
+    public func jes_setPullToRefreshBackgroundColor(_ color: UIColor) {
         pullToRefreshView?.backgroundColor = color
     }
     
-    public func jes_setPullToRefreshFillColor(color: UIColor) {
+    public func jes_setPullToRefreshFillColor(_ color: UIColor) {
         pullToRefreshView?.fillColor = color
-    }
-    
-    public func jes_stopLoading() {
-        pullToRefreshView?.stopLoading()
     }
 }
 
@@ -122,8 +152,8 @@ public extension UIScrollView {
 // MARK: (UIView) Extension
 
 public extension UIView {
-    func jes_center(usePresentationLayerIfPossible: Bool = false) -> CGPoint {
-        if usePresentationLayerIfPossible, let presentationLayer = layer.presentationLayer() as? CALayer { return presentationLayer.position }
+    func jes_center(_ usePresentationLayerIfPossible: Bool = false) -> CGPoint {
+        if usePresentationLayerIfPossible, let presentationLayer = layer.presentation() { return presentationLayer.position }
         return center
     }
 }
@@ -133,8 +163,8 @@ public extension UIView {
 
 public extension UIPanGestureRecognizer {
     func jes_resign() {
-        enabled = false
-        enabled = true
+        isEnabled = false
+        isEnabled = true
     }
 }
 
@@ -142,7 +172,7 @@ public extension UIPanGestureRecognizer {
 // MARK: (UIGestureRecognizerState) Extension
 
 public extension UIGestureRecognizerState {
-    func jes_isAnyOf(values: [UIGestureRecognizerState]) -> Bool {
-        return values.contains({ $0 == self })
+    func jes_isAnyOf(_ values: [UIGestureRecognizerState]) -> Bool {
+        return values.contains(where: { $0 == self })
     }
 }

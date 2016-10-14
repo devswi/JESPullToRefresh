@@ -22,24 +22,24 @@ enum InitialState {
 
 class JESRefreshIcon: UIView {
 
-    private var markedImage: UIImage = UIImage()
-    private var shadowImage: UIImage = UIImage(named: JESRefreshIconConstants.shadowImageName)!
+    fileprivate var markedImage: UIImage = UIImage()
+    fileprivate var shadowImage: UIImage = UIImage(named: JESRefreshIconConstants.shadowImageName)!
     
-    private var markedImageView: UIImageView?
-    private var shadowImageView: UIImageView?
+    fileprivate var markedImageView: UIImageView?
+    fileprivate var shadowImageView: UIImageView?
     
-    private var iconSize: CGFloat = 0.0
-    private var shadowWidth: CGFloat = 0
+    fileprivate var iconSize: CGFloat = 0.0
+    fileprivate var shadowWidth: CGFloat = 0
     
-    private var displayLink: CADisplayLink!
+    fileprivate var displayLink: CADisplayLink!
     
-    private var animating: Bool = false
+    fileprivate var animating: Bool = false
     
-    private var state: InitialState = .up(beginTime: 0.0)
-    private var offsetY: CGFloat = 0.0
-    private var beginTime: Double = 0.0
+    fileprivate var state: InitialState = .up(beginTime: 0.0)
+    fileprivate var offsetY: CGFloat = 0.0
+    fileprivate var beginTime: Double = 0.0
     
-    private struct JESRefreshIconConstants {
+    fileprivate struct JESRefreshIconConstants {
         static let shadowImageName: String = "jes_loading_shadow"
         static let iconSize: CGFloat = 32
         static let maxOffsetY: CGFloat = 14
@@ -74,8 +74,8 @@ class JESRefreshIcon: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func layoutIcon() {
-        self.backgroundColor = UIColor.clearColor()
+    fileprivate func layoutIcon() {
+        self.backgroundColor = UIColor.clear
         
         let size: CGFloat = self.iconSize - 2 * JESRefreshIconConstants.IconConstants.markedSpacing
         let offsetX: CGFloat = JESRefreshIconConstants.IconConstants.markedSpacing
@@ -85,7 +85,7 @@ class JESRefreshIcon: UIView {
             width: size,
            height: size))
         self.markedImageView?.image = self.markedImage
-        self.markedImageView?.contentMode = .ScaleToFill
+        self.markedImageView?.contentMode = .scaleToFill
         self.addSubview(self.markedImageView!)
         
         self.shadowImageView = UIImageView(frame: CGRect(x: offsetX, y: self.iconSize - JESRefreshIconConstants.IconConstants.shadowHeight, width: size, height: JESRefreshIconConstants.IconConstants.shadowHeight))
@@ -116,10 +116,10 @@ class JESRefreshIcon: UIView {
         animationGroup.beginTime = self.state.animationBeginTime()
         animationGroup.fillMode = kCAFillModeForwards
         animationGroup.repeatCount = Float.infinity
-        animationGroup.removedOnCompletion = false
+        animationGroup.isRemovedOnCompletion = false
         animationGroup.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
         
-        self.markedImageView!.layer.addAnimation(animationGroup, forKey: "image.animation.key")
+        self.markedImageView!.layer.add(animationGroup, forKey: "image.animation.key")
         
         let smallAnimation = CABasicAnimation(keyPath: "bounds.size.width")
         smallAnimation.fromValue = self.markedImageView!.bounds.width
@@ -141,10 +141,10 @@ class JESRefreshIcon: UIView {
         shadowAnimationGroup.beginTime = self.state.animationBeginTime()
         shadowAnimationGroup.fillMode = kCAFillModeForwards
         shadowAnimationGroup.repeatCount = Float.infinity
-        shadowAnimationGroup.removedOnCompletion = false
+        shadowAnimationGroup.isRemovedOnCompletion = false
         shadowAnimationGroup.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear)
         
-        self.shadowImageView!.layer.addAnimation(shadowAnimationGroup, forKey: "shadow.animation.key")
+        self.shadowImageView!.layer.add(shadowAnimationGroup, forKey: "shadow.animation.key")
     }
 
 }
